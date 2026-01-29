@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corso Accessibilità OJS - Metro Edition</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           1. VARIABLES & RESET
+           ============================================ */
+        :root {
+            /* Colori Metro Milano */
+            --m1-red: #E4002B;
+            --m2-green: #009246;
+            --m3-yellow: #FFC72C;
+            --m4-blue: #0076C0;
+            --m5-lilla: #9B59B6;
+            --m6-cyan: #00B5AD;
+            --m7-orange: #F39200;
+            
+            /* UI Colors */
+            --bg-dark: #1a1a2e;
+            --bg-card: #ffffff;
+            --text-dark: #16213e;
+            --text-light: #f0f0f0;
+            
+            /* Current line - will be set by JS */
+            --current-line-color: var(--m1-red);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Titillium Web', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SVG icon base styles */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .icon-lg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .icon-xl {
+            width: 48px;
+            height: 48px;
+        }
+
+        .icon-hero {
+            width: 100px;
+            height: 100px;
+            opacity: 0.2;
+        }
+        
+        /* ============================================
+           2. IMPRESS.JS BASE STYLES
+           ============================================ */
+        .impress-not-supported {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .impress-not-supported .fallback-message {
+            max-width: 600px;
+        }
+
+        .impress-enabled .fallback-message {
+            display: none;
+        }
+        
+        .impress-enabled .step {
+            opacity: 0.1;
+            transition: opacity 0.8s ease-in-out;
+        }
+        
+        .impress-enabled .step.active {
+            opacity: 1;
+        }
+        
+        /* ============================================
+           3. NAVIGATION MENU (FIXED)
+           ============================================ */
+        #metro-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        
+        #menu-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: 3px solid var(--current-line-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        #menu-toggle:hover {
+            transform: scale(1.1);
+            background: var(--current-line-color);
+            color: white;
+        }
+        
+        #lines-menu {
+            background: rgba(255,255,255,0.98);
+            border-radius: 16px;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 220px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        
+        #lines-menu.open {
+            display: flex;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .menu-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .menu-item.overview-btn {
+            background: var(--bg-dark);
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item.overview-btn:hover {
+            background: #2a2a4e;
+        }
+        
+        .line-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 14px;
+        }
+        
+        .line-badge.m1 { background: var(--m1-red); }
+        .line-badge.m2 { background: var(--m2-green); }
+        .line-badge.m3 { background: var(--m3-yellow); color: var(--text-dark); }
+        .line-badge.m4 { background: var(--m4-blue); }
+        .line-badge.m5 { background: var(--m5-lilla); }
+        .line-badge.m6 { background: var(--m6-cyan); }
+        .line-badge.m7 { background: var(--m7-orange); }
+        
+        /* ============================================
+           4. STEP STYLES - STATIONS
+           ============================================ */
+        .step {
+            width: 1000px;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* OVERVIEW - Mappa completa */
+        .step.overview {
+            width: 2000px;
+            height: 1400px;
+        }
+        
+        .overview h1 {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 30px;
+        }
+        
+        .overview .subtitle {
+            font-size: 28px;
+            opacity: 0.8;
+        }
+        
+        .metro-map-mini {
+            margin-top: 50px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .map-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+        }
+        
+        /* STATION - Fermata (vista esterna) */
+        .step.station {
+            background: transparent;
+        }
+        
+        .station-sign {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 80px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            position: relative;
+            max-width: 800px;
+        }
+        
+        .station-sign::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 12px;
+            border-radius: 20px 20px 0 0;
+            background: var(--current-line-color);
+        }
+        
+        .station-line-badge {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--current-line-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 900;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .station-name {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 20px;
+        }
+        
+        .station-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .next-hint {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .next-hint .icon {
+            width: 16px;
+            height: 16px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* CONTENT - Contenuto slide (zoom interno) */
+        .step.content {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            text-align: left;
+            color: var(--text-dark);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        
+        .content-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--current-line-color);
+        }
+        
+        .content-line-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--current-line-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        
+        .content h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .content h2 span {
+            color: var(--current-line-color);
+        }
+        
+        .content-body {
+            font-size: 20px;
+            line-height: 1.7;
+        }
+        
+        .content-body ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        
+        .content-body li {
+            margin-bottom: 12px;
+        }
+        
+        .content-body strong {
+            color: var(--current-line-color);
+        }
+        
+        /* SECTION TITLE - Inizio linea */
+        .step.section-title {
+            background: linear-gradient(135deg, var(--current-line-color) 0%, rgba(0,0,0,0.3) 100%);
+            background-color: var(--current-line-color);
+            border-radius: 24px;
+            color: white;
+        }
+        
+        .section-title .big-number {
+            font-size: 120px;
+            font-weight: 900;
+            opacity: 0.3;
+            line-height: 1;
+        }
+        
+        .section-title h2 {
+            font-size: 56px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .section-title .section-desc {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+        
+        /* ============================================
+           5. COMPONENT STYLES
+           ============================================ */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tile {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 16px;
+            border-top: 5px solid var(--current-line-color);
+        }
+        
+        .tile .icon {
+            width: 32px;
+            height: 32px;
+            color: var(--current-line-color);
+            margin-bottom: 15px;
+        }
+        
+        .tile h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+        
+        .tile p {
+            font-size: 16px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        
+        .code-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        
+        .info-box {
+            background: #eff6ff;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--current-line-color);
+        }
+        
+        .info-box h4 {
+            margin-bottom: 15px;
+            color: var(--current-line-color);
+        }
+        
+        .warning {
+            color: #dc2626;
+            font-weight: 700;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning .icon {
+            color: #dc2626;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th {
+            background: var(--current-line-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        .ux-example {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .ux-bad {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+        }
+        
+        .ux-good {
+            background: #f0fdf4;
+            border-left: 5px solid #22c55e;
+        }
+        
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .source-category h4 {
+            color: var(--current-line-color);
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .source-category ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .source-category li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 16px;
+        }
+
+        .icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+        }
+        
+        /* ============================================
+           6. NAVIGATION CONTROLS (BOTTOM)
+           ============================================ */
+        #nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 9999;
+        }
+        
+        .nav-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1);
+            background: var(--current-line-color);
+            color: white;
+        }
+        
+        /* Progress indicator */
+        #progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--current-line-color);
+            transition: width 0.3s ease;
+            z-index: 9998;
+        }
+        
+        /* ============================================
+           7. ACCESSIBILITY - Reduced Motion
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            .impress-enabled .step {
+                transition: opacity 0.1s;
+            }
+            
+            .next-hint .icon {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body class="impress-not-supported">
+
+    <!-- Fallback per browser non supportati -->
+    <div class="fallback-message">
+        <h1>Il tuo browser non supporta le funzionalità richieste</h1>
+        <p>Prova con una versione recente di Chrome, Firefox, Safari o Edge.</p>
+    </div>
+
+    <!-- ============================================
+         SVG SPRITE (hidden)
+         ============================================ -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+        <symbol id="icon-menu" viewBox="0 0 24 24">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-map" viewBox="0 0 24 24">
+            <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+            <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-scale" viewBox="0 0 24 24">
+            <path d="M12 3v18m-9-9l3-6h12l3 6M6 12a3 3 0 106 0M12 12a3 3 0 106 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-check-double" viewBox="0 0 24 24">
+            <path d="M2 12l5 5L18 6M8 12l5 5L22 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-universal-access" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="12" cy="7" r="1.5" fill="currentColor"/>
+            <path d="M8 11h8M12 11v6M9 21l3-4 3 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        <symbol id="icon-warning" viewBox="0 0 24 24">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-image" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+            <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-wand" viewBox="0 0 24 24">
+            <path d="M15 4V2m0 14v-2M8 9H6m12 0h-2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41M12 18l-2 4h4l-2-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M15 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-lighthouse" viewBox="0 0 24 24">
+            <path d="M12 2v4M5 10l2 12h10l2-12H5zM9 22v-6h6v6M12 6a2 2 0 100-4 2 2 0 000 4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-wave" viewBox="0 0 24 24">
+            <path d="M2 12c1.5-2 3-3 4.5-3s3 1 4.5 3 3 3 4.5 3 3-1 4.5-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M2 6c1.5-2 3-3 4.5-3s3 1 4.5 3 3 3 4.5 3 3-1 4.5-3M2 18c1.5-2 3-3 4.5-3s3 1 4.5 3 3 3 4.5 3 3-1 4.5-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-flag" viewBox="0 0 24 24">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+    </svg>
+
+    <!-- MENU NAVIGAZIONE FISSO -->
+    <nav id="metro-nav">
+        <button id="menu-toggle" aria-label="Menu linee metro">
+            <svg class="icon"><use href="#icon-menu"/></svg>
+        </button>
+        <div id="lines-menu" role="menu">
+            <div class="menu-item overview-btn" onclick="goToStep('overview')" role="menuitem">
+                <svg class="icon"><use href="#icon-map"/></svg>
+                <span>Vista Mappa</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m1-start')" role="menuitem">
+                <span class="line-badge m1">M1</span>
+                <span>Intro & Normativa</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m2-start')" role="menuitem">
+                <span class="line-badge m2">M2</span>
+                <span>Markup & Semantica</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m3-start')" role="menuitem">
+                <span class="line-badge m3">M3</span>
+                <span>CSS & Layout</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m4-start')" role="menuitem">
+                <span class="line-badge m4">M4</span>
+                <span>Contenuti & Asset</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m5-start')" role="menuitem">
+                <span class="line-badge m5">M5</span>
+                <span>User Experience</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m6-start')" role="menuitem">
+                <span class="line-badge m6">M6</span>
+                <span>Tool di Controllo</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('m7-start')" role="menuitem">
+                <span class="line-badge m7">M7</span>
+                <span>Fonti & Riferimenti</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTROLLI NAVIGAZIONE -->
+    <div id="nav-controls">
+        <button class="nav-btn" onclick="impress().prev()" aria-label="Slide precedente">
+            <svg class="icon"><use href="#icon-chevron-left"/></svg>
+        </button>
+        <button class="nav-btn" onclick="impress().next()" aria-label="Slide successiva">
+            <svg class="icon"><use href="#icon-chevron-right"/></svg>
+        </button>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div id="progress-bar"></div>
+
+    <!-- ============================================
+         IMPRESS.JS PRESENTATION
+         ============================================ -->
+    <div id="impress" data-transition-duration="800">
+
+        <!-- ========== OVERVIEW - MAPPA ========== -->
+        <div id="overview" class="step overview" 
+             data-x="2000" data-y="1500" data-z="0" data-scale="6">
+            <h1>🚇 AccessiGuide OJS</h1>
+            <p class="subtitle">Guida pratica alla conformità normativa e tecnica</p>
+            <div class="metro-map-mini">
+                <div class="map-line"><span class="line-badge m1">M1</span> Intro</div>
+                <div class="map-line"><span class="line-badge m2">M2</span> Markup</div>
+                <div class="map-line"><span class="line-badge m3">M3</span> CSS</div>
+                <div class="map-line"><span class="line-badge m4">M4</span> Asset</div>
+                <div class="map-line"><span class="line-badge m5">M5</span> UX</div>
+                <div class="map-line"><span class="line-badge m6">M6</span> Tool</div>
+                <div class="map-line"><span class="line-badge m7">M7</span> Fonti</div>
+            </div>
+        </div>
+
+        <!-- ========== M1 - INTRO & NORMATIVA (ROSSA) ========== -->
+        
+        <!-- M1: Inizio Linea -->
+        <div id="m1-start" class="step section-title" data-line="m1"
+             data-x="0" data-y="0" data-z="0" data-scale="1">
+            <div class="big-number">M1</div>
+            <h2>Intro & Normativa</h2>
+            <p class="section-desc">Fondamenti legali e obiettivi dell'accessibilità</p>
+        </div>
+
+        <!-- M1: Fermata 1 - Quadro Normativo -->
+        <div id="m1-s1-station" class="step station" data-line="m1"
+             data-x="1200" data-y="0" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M1</div>
+                <div class="station-name">Quadro Normativo</div>
+                <div class="station-subtitle">L'evoluzione delle direttive europee</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m1-s1-content" class="step content" data-line="m1"
+             data-x="1200" data-y="0" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M1</div>
+                <h2>Quadro <span>Normativo</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="two-column">
+                    <div>
+                        <p>L'Italia segue l'evoluzione delle direttive europee sull'accessibilità digitale:</p>
+                        <ul>
+                            <li><strong>Legge Stanca (4/2004):</strong> Il pilastro normativo italiano.</li>
+                            <li><strong>Direttiva UE 2016/2102:</strong> Obbligo per i soggetti pubblici.</li>
+                            <li><strong>Linee Guida AgID:</strong> Specifiche tecniche basate su WCAG 2.1.</li>
+                        </ul>
+                    </div>
+                    <div class="icon-box">
+                        <svg class="icon-hero"><use href="#icon-scale"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- M1: Fermata 2 - Standard Obbligatori -->
+        <div id="m1-s2-station" class="step station" data-line="m1"
+             data-x="2400" data-y="0" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M1</div>
+                <div class="station-name">Standard Obbligatori</div>
+                <div class="station-subtitle">WCAG 2.1 e principi POUR</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m1-s2-content" class="step content" data-line="m1"
+             data-x="2400" data-y="0" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M1</div>
+                <h2>Standard <span>Obbligatori</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="tile-grid">
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-check-double"/></svg>
+                        <h3>WCAG 2.1 AA</h3>
+                        <p>Livello minimo di conformità richiesto per legge.</p>
+                    </div>
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-universal-access"/></svg>
+                        <h3>Principi POUR</h3>
+                        <p>Percepibile, Utilizzabile, Comprensibile e Robusto.</p>
+                    </div>
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-eye"/></svg>
+                        <h3>Inclusione</h3>
+                        <p>Accesso garantito a utenti con disabilità fisiche o cognitive.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- M1: Fermata 3 - Sintesi Obblighi -->
+        <div id="m1-s3-station" class="step station" data-line="m1"
+             data-x="3600" data-y="0" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M1</div>
+                <div class="station-name">Sintesi degli Obblighi</div>
+                <div class="station-subtitle">Adempimenti annuali richiesti</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m1-s3-content" class="step content" data-line="m1"
+             data-x="3600" data-y="0" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M1</div>
+                <h2>Sintesi degli <span>Obblighi</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="two-column">
+                    <div class="info-box">
+                        <h4>Adempimenti Annuali</h4>
+                        <ul>
+                            <li><strong>Valutazione Tecnica:</strong> Audit periodico.</li>
+                            <li><strong>Dichiarazione:</strong> Pubblicazione entro il 23 Settembre.</li>
+                            <li><strong>Feedback:</strong> Canale per segnalazioni utenti.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p>L'Editor OJS ha la responsabilità di applicare questi principi durante la pubblicazione degli articoli.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== M2 - MARKUP & SEMANTICA (VERDE) ========== -->
+        
+        <!-- M2: Inizio Linea (nodo di scambio) -->
+        <div id="m2-start" class="step section-title" data-line="m2"
+             data-x="3600" data-y="1000" data-z="0" data-scale="1" data-rotate-z="90">
+            <div class="big-number">M2</div>
+            <h2>Markup & Semantica</h2>
+            <p class="section-desc">Dare significato alla struttura del documento</p>
+        </div>
+
+        <!-- M2: Fermata 1 - Gerarchia Titoli -->
+        <div id="m2-s1-station" class="step station" data-line="m2"
+             data-x="3600" data-y="2000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M2</div>
+                <div class="station-name">Gerarchia dei Titoli</div>
+                <div class="station-subtitle">Navigazione tramite Screen Reader</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m2-s1-content" class="step content" data-line="m2"
+             data-x="3600" data-y="2000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M2</div>
+                <h2>Gerarchia dei <span>Titoli</span></h2>
+            </div>
+            <div class="content-body">
+                <p>Fondamentale per la navigazione tramite Screen Reader:</p>
+                <div class="code-box">
+                    &lt;h1&gt;Titolo dell'Articolo&lt;/h1&gt;<br>
+                    &nbsp;&nbsp;&lt;h2&gt;Metodologia&lt;/h2&gt;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;h3&gt;Raccolta Dati&lt;/h3&gt;<br>
+                    &nbsp;&nbsp;&lt;h2&gt;Risultati&lt;/h2&gt;
+                </div>
+                <p class="warning">
+                    <svg class="icon"><use href="#icon-warning"/></svg>
+                    Mai saltare i livelli (es. da H2 a H4)!
+                </p>
+            </div>
+        </div>
+
+        <!-- ========== M3 - CSS & LAYOUT (GIALLA) ========== -->
+        
+        <!-- M3: Inizio Linea -->
+        <div id="m3-start" class="step section-title" data-line="m3"
+             data-x="2400" data-y="2000" data-z="0" data-scale="1">
+            <div class="big-number">M3</div>
+            <h2>CSS & Layout</h2>
+            <p class="section-desc">Gestione estetica accessibile del tema</p>
+        </div>
+
+        <!-- M3: Fermata 1 - Specificità CSS -->
+        <div id="m3-s1-station" class="step station" data-line="m3"
+             data-x="1200" data-y="2000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M3</div>
+                <div class="station-name">Specificità CSS</div>
+                <div class="station-subtitle">Capire il peso dei selettori</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m3-s1-content" class="step content" data-line="m3"
+             data-x="1200" data-y="2000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M3</div>
+                <h2>Specificità dei <span>CSS</span></h2>
+            </div>
+            <div class="content-body">
+                <table>
+                    <thead>
+                        <tr><th>Peso</th><th>Tipo</th><th>Esempio</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1000</td><td>Inline</td><td><code>style="..."</code></td></tr>
+                        <tr><td>100</td><td>ID</td><td><code>#header</code></td></tr>
+                        <tr><td>10</td><td>Classe</td><td><code>.article-text</code></td></tr>
+                        <tr><td>1</td><td>Tag</td><td><code>p, h1, div</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- M3: Fermata 2 - Contrasti -->
+        <div id="m3-s2-station" class="step station" data-line="m3"
+             data-x="0" data-y="2000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M3</div>
+                <div class="station-name">Colori e Contrasti</div>
+                <div class="station-subtitle">Rapporto minimo WCAG</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m3-s2-content" class="step content" data-line="m3"
+             data-x="0" data-y="2000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M3</div>
+                <h2>Colori e <span>Contrasti</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="two-column">
+                    <div>
+                        <p>Rapporto minimo WCAG AA: <strong>4.5:1</strong>.</p>
+                        <div class="code-box">
+                            .testo-accessibile {<br>
+                            &nbsp;&nbsp;color: #333333;<br>
+                            &nbsp;&nbsp;background: #ffffff;<br>
+                            }
+                        </div>
+                    </div>
+                    <div style="border:2px solid #e2e8f0; padding:30px; border-radius:12px; text-align:center; display:flex; flex-direction:column; justify-content:center;">
+                        <p style="font-size:24px; font-weight:bold; color:#1e293b;">Testo Leggibile ✓</p>
+                        <p style="font-size:18px; color:#94a3b8; margin-top:10px;">Contrasto: 12.6:1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- M3: Fermata 3 - Tipografia -->
+        <div id="m3-s3-station" class="step station" data-line="m3"
+             data-x="0" data-y="3000" data-z="0" data-scale="1" data-rotate-z="90">
+            <div class="station-sign">
+                <div class="station-line-badge">M3</div>
+                <div class="station-name">Tipografia e Spazi</div>
+                <div class="station-subtitle">Migliorare la leggibilità</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m3-s3-content" class="step content" data-line="m3"
+             data-x="0" data-y="3000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M3</div>
+                <h2>Tipografia e <span>Spazi</span></h2>
+            </div>
+            <div class="content-body">
+                <p>Migliorare la leggibilità per tutti gli utenti:</p>
+                <div class="code-box">
+                    .corpo-articolo {<br>
+                    &nbsp;&nbsp;font-size: 1.1rem;<br>
+                    &nbsp;&nbsp;line-height: 1.6;<br>
+                    &nbsp;&nbsp;margin-bottom: 1.5rem;<br>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== M4 - CONTENUTI & ASSET (BLU) ========== -->
+        
+        <!-- M4: Inizio Linea -->
+        <div id="m4-start" class="step section-title" data-line="m4"
+             data-x="1200" data-y="3000" data-z="0" data-scale="1">
+            <div class="big-number">M4</div>
+            <h2>Contenuti & Asset</h2>
+            <p class="section-desc">Immagini, Link e File multimediali</p>
+        </div>
+
+        <!-- M4: Fermata 1 - Asset -->
+        <div id="m4-s1-station" class="step station" data-line="m4"
+             data-x="2400" data-y="3000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M4</div>
+                <div class="station-name">Immagini e Link</div>
+                <div class="station-subtitle">Alt text e link descrittivi</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m4-s1-content" class="step content" data-line="m4"
+             data-x="2400" data-y="3000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M4</div>
+                <h2>Asset: <span>Immagini e Link</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="two-column">
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-image"/></svg>
+                        <h3>Immagini</h3>
+                        <p>Sempre <code>alt="..."</code> descrittivo. Se l'immagine è decorativa, alt vuoto.</p>
+                    </div>
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-link"/></svg>
+                        <h3>Link</h3>
+                        <p>Evitare "clicca qui". Preferire descrizioni come "Scarica il PDF della ricerca".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== M5 - USER EXPERIENCE (LILLA) ========== -->
+        
+        <!-- M5: Inizio Linea -->
+        <div id="m5-start" class="step section-title" data-line="m5"
+             data-x="2400" data-y="4000" data-z="0" data-scale="1" data-rotate-z="90">
+            <div class="big-number">M5</div>
+            <h2>User Experience</h2>
+            <p class="section-desc">Semplicità e chiarezza dei contenuti</p>
+        </div>
+
+        <!-- M5: Fermata 1 - UX e Semplicità -->
+        <div id="m5-s1-station" class="step station" data-line="m5"
+             data-x="2400" data-y="5000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M5</div>
+                <div class="station-name">UX e Semplicità</div>
+                <div class="station-subtitle">Ridurre il carico cognitivo</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m5-s1-content" class="step content" data-line="m5"
+             data-x="2400" data-y="5000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M5</div>
+                <h2>UX e <span>Semplicità</span></h2>
+            </div>
+            <div class="content-body">
+                <p>L'accessibilità è anche <strong>chiarezza espositiva</strong>.</p>
+                <div class="two-column" style="margin-top:20px;">
+                    <div>
+                        <div class="ux-example ux-bad">
+                            <strong>❌ UX Complessa:</strong> Paragrafi infiniti, termini tecnici non spiegati.
+                        </div>
+                        <div class="ux-example ux-good">
+                            <strong>✓ UX Semplice:</strong> Frasi brevi, liste puntate, grassetti per guidare.
+                        </div>
+                    </div>
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-wand"/></svg>
+                        <h3>Consiglio Pro</h3>
+                        <p>Usa la "Piramide Rovesciata": informazioni importanti all'inizio.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== M6 - TOOL DI CONTROLLO (CIANO) ========== -->
+        
+        <!-- M6: Inizio Linea -->
+        <div id="m6-start" class="step section-title" data-line="m6"
+             data-x="1200" data-y="5000" data-z="0" data-scale="1">
+            <div class="big-number">M6</div>
+            <h2>Tool di Controllo</h2>
+            <p class="section-desc">Verificare il lavoro svolto</p>
+        </div>
+
+        <!-- M6: Fermata 1 - Strumenti Audit -->
+        <div id="m6-s1-station" class="step station" data-line="m6"
+             data-x="0" data-y="5000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M6</div>
+                <div class="station-name">Strumenti di Audit</div>
+                <div class="station-subtitle">Lighthouse, WAVE, Mauve++</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m6-s1-content" class="step content" data-line="m6"
+             data-x="0" data-y="5000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M6</div>
+                <h2>Strumenti di <span>Audit</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="tile-grid">
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-lighthouse"/></svg>
+                        <h3>Lighthouse</h3>
+                        <p>Integrato in Chrome. Analisi tecnica completa.</p>
+                    </div>
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-wave"/></svg>
+                        <h3>WAVE</h3>
+                        <p>Estensione browser per audit visivo immediato.</p>
+                    </div>
+                    <div class="tile">
+                        <svg class="icon icon-lg"><use href="#icon-flag"/></svg>
+                        <h3>Mauve++</h3>
+                        <p>Tool specifico per conformità AgID italiana.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== M7 - FONTI & RIFERIMENTI (ARANCIO) ========== -->
+        
+        <!-- M7: Inizio Linea -->
+        <div id="m7-start" class="step section-title" data-line="m7"
+             data-x="0" data-y="6000" data-z="0" data-scale="1" data-rotate-z="90">
+            <div class="big-number">M7</div>
+            <h2>Fonti & Riferimenti</h2>
+            <p class="section-desc">Documentazione e risorse utili</p>
+        </div>
+
+        <!-- M7: Fermata 1 - Fonti -->
+        <div id="m7-s1-station" class="step station" data-line="m7"
+             data-x="0" data-y="7000" data-z="0" data-scale="1">
+            <div class="station-sign">
+                <div class="station-line-badge">M7</div>
+                <div class="station-name">Fonti e Riferimenti</div>
+                <div class="station-subtitle">Normativa, documentazione, tool</div>
+                <div class="next-hint">
+                    <svg class="icon"><use href="#icon-arrow-right"/></svg>
+                    Premi per entrare
+                </div>
+            </div>
+        </div>
+
+        <div id="m7-s1-content" class="step content" data-line="m7"
+             data-x="0" data-y="7000" data-z="0" data-scale="0.6">
+            <div class="content-header">
+                <div class="content-line-badge">M7</div>
+                <h2>Fonti e <span>Riferimenti</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="sources-grid">
+                    <div class="source-category">
+                        <h4>📜 Normativa</h4>
+                        <ul>
+                            <li><strong>WCAG 2.1:</strong> Standard W3C</li>
+                            <li><strong>AgID:</strong> Linee guida italiane</li>
+                            <li><strong>Legge 4/2004:</strong> Legge Stanca</li>
+                        </ul>
+                    </div>
+                    <div class="source-category">
+                        <h4>📚 Documentazione</h4>
+                        <ul>
+                            <li><strong>MDN Web Docs</strong></li>
+                            <li><strong>PKP OJS Docs</strong></li>
+                            <li><strong>WebAIM</strong></li>
+                        </ul>
+                    </div>
+                    <div class="source-category">
+                        <h4>🛠️ Tool</h4>
+                        <ul>
+                            <li>Google Lighthouse</li>
+                            <li>WebAIM WAVE</li>
+                            <li>Color Contrast Checker</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- IMPRESS.JS - Local -->
+    <script src="js/impress.js"></script>
+    
+    <script>
+        // Colori delle linee
+        const lineColors = {
+            'm1': '#E4002B',
+            'm2': '#009246',
+            'm3': '#FFC72C',
+            'm4': '#0076C0',
+            'm5': '#9B59B6',
+            'm6': '#00B5AD',
+            'm7': '#F39200'
+        };
+        
+        // Init impress.js
+        impress().init();
+        
+        // Menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const linesMenu = document.getElementById('lines-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            linesMenu.classList.toggle('open');
+        });
+        
+        // Chiudi menu cliccando fuori
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#metro-nav')) {
+                linesMenu.classList.remove('open');
+            }
+        });
+        
+        // Navigazione a step specifico
+        function goToStep(stepId) {
+            impress().goto(stepId);
+            linesMenu.classList.remove('open');
+        }
+        
+        // Aggiorna colore linea corrente
+        function updateLineColor(stepElement) {
+            const line = stepElement.dataset.line;
+            if (line && lineColors[line]) {
+                document.documentElement.style.setProperty('--current-line-color', lineColors[line]);
+            }
+        }
+        
+        // Progress bar
+        function updateProgress() {
+            const steps = document.querySelectorAll('.step');
+            const activeStep = document.querySelector('.step.active');
+            if (activeStep) {
+                const index = Array.from(steps).indexOf(activeStep);
+                const progress = ((index + 1) / steps.length) * 100;
+                document.getElementById('progress-bar').style.width = progress + '%';
+            }
+        }
+        
+        // Event listeners per cambio step
+        document.addEventListener('impress:stepenter', (e) => {
+            updateLineColor(e.target);
+            updateProgress();
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                goToStep('overview');
+            }
+            if (e.key === 'm' || e.key === 'M') {
+                linesMenu.classList.toggle('open');
+            }
+        });
+        
+        // Init
+        updateProgress();
+    </script>
+</body>
+</html>

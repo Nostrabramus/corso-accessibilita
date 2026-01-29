@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corso Accessibilità OJS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. SETUP & CORE DESIGN */
+        * { box-sizing: border-box; }
+        
+        :root {
+            --primary: #1e40af;
+            --accent: #deff9a;
+            --dark-bg: #0f172a;
+            --sidebar-bg: #1e293b;
+            --text-dark: #1e293b;
+            --text-light: #f8fafc;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-light);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Navigazione Laterale */
+        #master-nav {
+            width: 280px;
+            background: var(--sidebar-bg);
+            height: 100vh;
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 0;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .nav-logo {
+            padding: 0 25px 25px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+
+        .nav-logo h1 {
+            font-size: 18px;
+            color: var(--accent);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover { color: white; background: #334155; }
+        .nav-item.active {
+            color: white;
+            background: #1e1b4b;
+            border-left-color: var(--accent);
+        }
+
+        /* Slide Deck & Responsive Scaling */
+        #slide-deck {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--dark-bg);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-scaler {
+            width: 1280px;
+            height: 720px;
+            transform-origin: center;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            color: var(--text-dark);
+            display: none; 
+            flex-direction: column;
+            padding: 60px;
+            border-radius: 8px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-container.active { display: flex; }
+
+        /* Typography & Layouts */
+        h2.slide-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 35px 0;
+            border-left: 8px solid var(--primary);
+            padding-left: 20px;
+        }
+
+        h2.slide-title span { color: var(--primary); }
+
+        .content-area { flex-grow: 1; font-size: 20px; line-height: 1.6; }
+
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        
+        .tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .tile {
+            background: #f1f5f9; padding: 25px; border-radius: 12px;
+            border-top: 4px solid var(--primary);
+        }
+        .tile i { font-size: 28px; color: var(--primary); margin-bottom: 15px; }
+        .tile h3 { font-size: 20px; margin: 0 0 10px 0; }
+
+        .priority-box {
+            background: #1e293b; color: #e2e8f0;
+            padding: 20px; border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px; margin-top: 20px;
+        }
+
+        /* UI Controls */
+        .nav-controls {
+            position: absolute; bottom: 30px; right: 40px;
+            display: flex; gap: 10px; z-index: 1000;
+        }
+        .ctrl-btn {
+            background: var(--sidebar-bg); color: white; border: 1px solid #475569;
+            width: 50px; height: 50px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .ctrl-btn:hover { background: var(--primary); border-color: var(--primary); }
+
+        .section-title-layout {
+            justify-content: center; align-items: center; text-align: center;
+            background: linear-gradient(135deg, #1e40af 0%, #1e1b4b 100%);
+            color: white;
+        }
+        .section-title-layout h2 { color: white; font-size: 60px; border: none; padding: 0; }
+        .section-title-layout hr { width: 80px; border: 2px solid var(--accent); margin: 20px auto; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+
+        .sources-list { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .source-category h4 { color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; }
+        .source-category ul { padding-left: 20px; list-style-type: square; }
+        .source-category li { margin-bottom: 8px; font-size: 16px; }
+
+        .ux-example {
+            padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 18px;
+        }
+        .ux-bad { background: #fee2e2; border-left: 5px solid #ef4444; color: #991b1b; }
+        .ux-good { background: #dcfce7; border-left: 5px solid #22c55e; color: #166534; }
+    </style>
+</head>
+<body>
+
+    <nav id="master-nav">
+        <div class="nav-logo"><h1>AccessiGuide OJS</h1></div>
+        <div class="nav-item active" onclick="goToSlide(0)">Copertina</div>
+        <div class="nav-item" onclick="goToSlide(1)">1. Intro & Normativa</div>
+        <div class="nav-item" onclick="goToSlide(5)">2. Markup & Semantica</div>
+        <div class="nav-item" onclick="goToSlide(7)">3. CSS & Layout</div>
+        <div class="nav-item" onclick="goToSlide(11)">4. Contenuti & Asset</div>
+        <div class="nav-item" onclick="goToSlide(13)">5. User Experience</div>
+        <div class="nav-item" onclick="goToSlide(15)">6. Tool di Controllo</div>
+        <div class="nav-item" onclick="goToSlide(17)">7. Fonti & Riferimenti</div>
+    </nav>
+
+    <div id="slide-deck">
+        <div class="slide-scaler" id="scaler">
+            
+            <!-- SLIDE 0: Copertina -->
+            <div class="slide-container active">
+                <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                    <h1 style="font-size: 70px; margin:0; color:var(--primary);">Accessibilità per Editor OJS</h1>
+                    <p style="font-size: 24px; color:#64748b;">Guida pratica alla conformità normativa e tecnica</p>
+                    <div style="width:100px; height:4px; background:var(--accent); margin:30px 0;"></div>
+                </div>
+            </div>
+
+            <!-- SLIDE 1: Sezione 1 -->
+            <div class="slide-container section-title-layout">
+                <h2>Modulo 1<br><span>Introduzione Teorica</span></h2>
+                <hr>
+                <p>Fondamenti legali e obiettivi dell'accessibilità</p>
+            </div>
+
+            <!-- SLIDE 2: Quadro Normativo -->
+            <div class="slide-container">
+                <h2 class="slide-title">Quadro <span>Normativo</span></h2>
+                <div class="content-area">
+                    <div class="two-column">
+                        <div>
+                            <p>L'Italia segue l'evoluzione delle direttive europee sull'accessibilità digitale:</p>
+                            <ul>
+                                <li><strong>Legge Stanca (4/2004):</strong> Il pilastro normativo italiano.</li>
+                                <li><strong>Direttiva UE 2016/2102:</strong> Obbligo per i soggetti pubblici.</li>
+                                <li><strong>Linee Guida AgID:</strong> Specifiche tecniche basate su WCAG 2.1.</li>
+                            </ul>
+                        </div>
+                        <div style="background:#f8fafc; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid #e2e8f0;">
+                            <i class="fa-solid fa-scale-balanced" style="font-size:120px; color:var(--primary); opacity:0.2;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Standard Obbligatori -->
+            <div class="slide-container">
+                <h2 class="slide-title">Standard <span>Obbligatori</span></h2>
+                <div class="content-area">
+                    <div class="tile-grid">
+                        <div class="tile">
+                            <i class="fa-solid fa-check-double"></i>
+                            <h3>WCAG 2.1 AA</h3>
+                            <p>Livello minimo di conformità richiesto per legge.</p>
+                        </div>
+                        <div class="tile">
+                            <i class="fa-solid fa-universal-access"></i>
+                            <h3>Principi POUR</h3>
+                            <p>Percepibile, Utilizzabile, Comprensibile e Robusto.</p>
+                        </div>
+                        <div class="tile">
+                            <i class="fa-solid fa-eye"></i>
+                            <h3>Inclusione</h3>
+                            <p>Accesso garantito a utenti con disabilità fisiche o cognitive.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Sintesi Obblighi -->
+            <div class="slide-container">
+                <h2 class="slide-title">Sintesi degli <span>Obblighi</span></h2>
+                <div class="content-area">
+                    <div class="two-column">
+                        <div style="background:#eff6ff; padding:30px; border-radius:12px;">
+                            <h4 style="margin-top:0;">Adempimenti Annuali</h4>
+                            <ul>
+                                <li><strong>Valutazione Tecnica:</strong> Audit periodico.</li>
+                                <li><strong>Dichiarazione:</strong> Pubblicazione entro il 23 Settembre.</li>
+                                <li><strong>Feedback:</strong> Canale per segnalazioni utenti.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p>L'Editor OJS ha la responsabilità di applicare questi principi durante la pubblicazione degli articoli.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Sezione 2 -->
+            <div class="slide-container section-title-layout">
+                <h2>Modulo 2<br><span>Markup & Semantica</span></h2>
+                <hr>
+                <p>Dare significato alla struttura del documento</p>
+            </div>
+
+            <!-- SLIDE 6: Gerarchia Titoli -->
+            <div class="slide-container">
+                <h2 class="slide-title">Gerarchia dei <span>Titoli</span></h2>
+                <div class="content-area">
+                    <p>Fondamentale per la navigazione tramite Screen Reader:</p>
+                    <div class="priority-box">
+                        &lt;h1&gt;Titolo dell'Articolo&lt;/h1&gt;<br>
+                        &nbsp;&nbsp;&lt;h2&gt;Metodologia&lt;/h2&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;h3&gt;Raccolta Dati&lt;/h3&gt;<br>
+                        &nbsp;&nbsp;&lt;h2&gt;Risultati&lt;/h2&gt;
+                    </div>
+                    <p style="color:#e11d48; font-weight:bold; margin-top:20px;">⚠️ Mai saltare i livelli (es. da H2 a H4)!</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Sezione 3 -->
+            <div class="slide-container section-title-layout">
+                <h2>Modulo 3<br><span>CSS & Layout</span></h2>
+                <hr>
+                <p>Gestione estetica accessibile del tema</p>
+            </div>
+
+            <!-- SLIDE 8: Specificità CSS -->
+            <div class="slide-container">
+                <h2 class="slide-title">Specificità dei <span>CSS</span></h2>
+                <div class="content-area">
+                    <table>
+                        <thead>
+                            <tr><th>Peso</th><th>Tipo</th><th>Esempio</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1000</td><td>Inline</td><td><code>style="..."</code></td></tr>
+                            <tr><td>100</td><td>ID</td><td><code>#header</code></td></tr>
+                            <tr><td>10</td><td>Classe</td><td><code>.article-text</code></td></tr>
+                            <tr><td>1</td><td>Tag</td><td><code>p, h1, div</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: Contrasti -->
+            <div class="slide-container">
+                <h2 class="slide-title">Colori e <span>Contrasti</span></h2>
+                <div class="content-area">
+                    <div class="two-column">
+                        <div>
+                            <p>Rapporto minimo WCAG AA: <strong>4.5:1</strong>.</p>
+                            <div class="priority-box">
+                                .testo-accessibile {<br>
+                                &nbsp;&nbsp;color: #333333;<br>
+                                &nbsp;&nbsp;background: #ffffff;<br>
+                                }
+                            </div>
+                        </div>
+                        <div id="demo-box" style="border:2px solid #e2e8f0; padding:30px; border-radius:12px; text-align:center;">
+                            <p id="demo-text" style="font-size:24px; font-weight:bold;">Testo Leggibile</p>
+                            <button class="ctrl-btn" onclick="toggleDemo()" style="width:auto; border-radius:8px; padding:0 15px; margin: 0 auto;">Inverti</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: Tipografia -->
+            <div class="slide-container">
+                <h2 class="slide-title">Tipografia e <span>Spazi</span></h2>
+                <div class="content-area">
+                    <p>Migliorare la leggibilità per tutti gli utenti:</p>
+                    <div class="priority-box">
+                        .corpo-articolo {<br>
+                        &nbsp;&nbsp;font-size: 1.1rem;<br>
+                        &nbsp;&nbsp;line-height: 1.6;<br>
+                        &nbsp;&nbsp;margin-bottom: 1.5rem;<br>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Sezione 4 -->
+            <div class="slide-container section-title-layout">
+                <h2>Modulo 4<br><span>Contenuti & Asset</span></h2>
+                <hr>
+                <p>Immagini, Link e File multimediali</p>
+            </div>
+
+            <!-- SLIDE 12: Asset -->
+            <div class="slide-container">
+                <h2 class="slide-title">Asset: <span>Immagini e Link</span></h2>
+                <div class="content-area">
+                    <div class="two-column">
+                        <div class="tile">
+                            <i class="fa-solid fa-image"></i>
+                            <h3>Immagini</h3>
+                            <p>Sempre <code>alt="..."</code> descrittivo. Se l'immagine è decorativa, alt vuoto.</p>
+                        </div>
+                        <div class="tile">
+                            <i class="fa-solid fa-link"></i>
+                            <h3>Link</h3>
+                            <p>Evitare "clicca qui". Preferire descrizioni come "Scarica il PDF della ricerca".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 13: Sezione 5 -->
+            <div class="slide-container section-title-layout">
+                <h2>Modulo 5<br><span>User Experience</span></h2>
+                <hr>
+                <p>Semplicità e chiarezza dei contenuti</p>
+            </div>
+
+            <!-- SLIDE 14: UX e Semplicità -->
+            <div class="slide-container">
+                <h2 class="slide-title">UX e <span>Semplicità</span></h2>
+                <div class="content-area">
+                    <p>L'accessibilità è anche <strong>chiarezza espositiva</strong>. Una buona UX riduce il carico cognitivo per l'utente.</p>
+                    <div class="two-column">
+                        <div>
+                            <div class="ux-example ux-bad">
+                                <strong>UX Complessa:</strong> Paragrafi infiniti, termini tecnici non spiegati e muri di testo senza interruzioni.
+                            </div>
+                            <div class="ux-example ux-good">
+                                <strong>UX Semplice:</strong> Frasi brevi, uso sapiente di liste puntate e grassetti per guidare l'occhio.
+                            </div>
+                        </div>
+                        <div class="tile">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <h3>Consiglio Pro</h3>
+                            <p>Usa la "Piramide Rovesciata": metti le informazioni più importanti all'inizio di ogni sezione per favorire la scansione rapida.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 15: Sezione 6 -->
+            <div class="slide-container section-title-layout">
+                <h2>Modulo 6<br><span>Tool di Controllo</span></h2>
+                <hr>
+                <p>Verificare il lavoro svolto</p>
+            </div>
+
+            <!-- SLIDE 16: Tools -->
+            <div class="slide-container">
+                <h2 class="slide-title">Strumenti di <span>Audit</span></h2>
+                <div class="content-area">
+                    <div class="tile-grid">
+                        <div class="tile"><h3>Lighthouse</h3><p>Integrato in Chrome. Analisi tecnica completa e punteggi SEO/Accessibilità.</p></div>
+                        <div class="tile"><h3>WAVE</h3><p>Estensione browser per audit visivo immediato degli errori WCAG.</p></div>
+                        <div class="tile"><h3>Mauve++</h3><p>Tool specifico per la conformità alla normativa italiana AgID.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 17: Fonti & Riferimenti -->
+            <div class="slide-container">
+                <h2 class="slide-title">Fonti e <span>Riferimenti</span></h2>
+                <div class="content-area">
+                    <div class="sources-list">
+                        <div class="source-category">
+                            <h4>Normativa e Standard</h4>
+                            <ul>
+                                <li><strong>WCAG 2.1:</strong> Standard internazionale W3C.</li>
+                                <li><strong>AgID:</strong> Linee guida accessibilità informatica.</li>
+                                <li><strong>Legge 4/2004:</strong> Legge Stanca italiana.</li>
+                            </ul>
+                        </div>
+                        <div class="source-category">
+                            <h4>Documentazione</h4>
+                            <ul>
+                                <li><strong>MDN Web Docs:</strong> CSS e HTML semantico.</li>
+                                <li><strong>PKP OJS:</strong> Documentazione ufficiale accessibilità.</li>
+                                <li><strong>WebAIM:</strong> Risorse pratiche e simulazioni.</li>
+                            </ul>
+                        </div>
+                        <div class="source-category">
+                            <h4>Tool</h4>
+                            <ul>
+                                <li><strong>Google Lighthouse</strong></li>
+                                <li><strong>WebAIM WAVE</strong></li>
+                                <li><strong>Color Contrast Checker</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CONTROLLI NAVIGAZIONE -->
+    <div class="nav-controls">
+        <button class="ctrl-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="ctrl-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-container');
+        const navItems = document.querySelectorAll('.nav-item');
+        const scaler = document.getElementById('scaler');
+
+        function handleResize() {
+            const container = document.getElementById('slide-deck');
+            const cw = container.clientWidth - 40;
+            const ch = container.clientHeight - 40;
+            const scale = Math.min(cw / 1280, ch / 720);
+            scaler.style.transform = `scale(${scale})`;
+        }
+
+        function updateSlide() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            // Logica per highlight sidebar basata sui moduli
+            if (currentSlide === 0) navItems[0].classList.add('active');
+            else if (currentSlide >= 1 && currentSlide <= 4) navItems[1].classList.add('active');
+            else if (currentSlide >= 5 && currentSlide <= 6) navItems[2].classList.add('active');
+            else if (currentSlide >= 7 && currentSlide <= 10) navItems[3].classList.add('active');
+            else if (currentSlide >= 11 && currentSlide <= 12) navItems[4].classList.add('active');
+            else if (currentSlide >= 13 && currentSlide <= 14) navItems[5].classList.add('active');
+            else if (currentSlide >= 15 && currentSlide <= 16) navItems[6].classList.add('active');
+            else if (currentSlide === 17) navItems[7].classList.add('active');
+        }
+
+        function changeSlide(dir) {
+            currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide + dir));
+            updateSlide();
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            updateSlide();
+        }
+
+        function toggleDemo() {
+            const t = document.getElementById('demo-text');
+            const b = document.getElementById('demo-box');
+            if (t.style.color === 'rgb(203, 213, 225)') {
+                t.style.color = '#1e293b';
+                b.style.background = '#ffffff';
+            } else {
+                t.style.color = '#cbd5e1';
+                b.style.background = '#f1f5f9';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        handleResize();
+        updateSlide();
+    </script>
+</body>
+</html>

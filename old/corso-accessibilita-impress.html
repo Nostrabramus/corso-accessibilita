@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corso Accessibilità Web</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           1. VARIABLES & RESET
+           ============================================ */
+        :root {
+            /* Chapter Colors */
+            --ch1-color: #E4002B;  /* Rosso - Normativa */
+            --ch2-color: #009246;  /* Verde - Markup */
+            --ch3-color: #F39200;  /* Arancio - CSS */
+            --ch4-color: #0076C0;  /* Blu - Asset */
+            --ch5-color: #9B59B6;  /* Viola - UX */
+            --ch6-color: #00B5AD;  /* Ciano - Tools */
+            --ch7-color: #E91E63;  /* Magenta - Fonti */
+            
+            /* UI Colors */
+            --bg-dark: #0a1628;
+            --bg-card: #ffffff;
+            --text-dark: #1a202c;
+            --text-light: #f0f0f0;
+            --accent-blue: #0066cc;
+            
+            /* Current chapter color */
+            --current-chapter-color: var(--accent-blue);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Titillium Web', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+        
+        /* ============================================
+           2. IMPRESS.JS BASE STYLES
+           ============================================ */
+        .impress-not-supported {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .impress-not-supported .fallback-message {
+            max-width: 600px;
+        }
+
+        .impress-enabled .fallback-message {
+            display: none;
+        }
+        
+        .impress-enabled .step {
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+        
+        .impress-enabled .step.active {
+            opacity: 1;
+        }
+
+        /* ============================================
+           3. BACKGROUND MAP SVG
+           ============================================ */
+        #background-map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        #background-map svg {
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            max-height: 1400px;
+        }
+        
+        /* ============================================
+           4. NAVIGATION MENU (FIXED)
+           ============================================ */
+        #chapter-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        
+        #menu-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: 3px solid var(--current-chapter-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        #menu-toggle:hover {
+            transform: scale(1.1);
+            background: var(--current-chapter-color);
+            color: white;
+        }
+        
+        #chapters-menu {
+            background: rgba(255,255,255,0.98);
+            border-radius: 16px;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 240px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        
+        #chapters-menu.open {
+            display: flex;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .menu-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .menu-item.overview-btn {
+            background: var(--bg-dark);
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .menu-item.overview-btn:hover {
+            background: #1a2a4a;
+        }
+        
+        .chapter-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .chapter-dot.ch1 { background: var(--ch1-color); }
+        .chapter-dot.ch2 { background: var(--ch2-color); }
+        .chapter-dot.ch3 { background: var(--ch3-color); }
+        .chapter-dot.ch4 { background: var(--ch4-color); }
+        .chapter-dot.ch5 { background: var(--ch5-color); }
+        .chapter-dot.ch6 { background: var(--ch6-color); }
+        .chapter-dot.ch7 { background: var(--ch7-color); }
+
+        /* ============================================
+           5. STEP STYLES
+           ============================================ */
+        .step {
+            width: 1000px;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        /* OVERVIEW */
+        .step.overview {
+            width: 2400px;
+            height: 2400px;
+        }
+        
+        .overview-content {
+            text-align: center;
+        }
+        
+        .overview-content h1 {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #0066cc, #00a8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .overview-content .subtitle {
+            font-size: 28px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        /* CHAPTER TITLE (landing on icon) */
+        .step.chapter-title {
+            background: transparent;
+        }
+
+        .chapter-card {
+            background: white;
+            border-radius: 24px;
+            padding: 50px 70px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            position: relative;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            border-radius: 24px 24px 0 0;
+            background: var(--current-chapter-color);
+        }
+
+        .chapter-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            color: var(--current-chapter-color);
+        }
+
+        .chapter-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chapter-card h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .chapter-card .chapter-subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .chapter-number {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: var(--current-chapter-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* CONTENT SLIDE */
+        .step.content {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            text-align: left;
+            color: var(--text-dark);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        
+        .content-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--current-chapter-color);
+        }
+        
+        .content-header .header-icon {
+            width: 44px;
+            height: 44px;
+            color: var(--current-chapter-color);
+            flex-shrink: 0;
+        }
+        
+        .content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .content h2 span {
+            color: var(--current-chapter-color);
+        }
+        
+        .content-body {
+            font-size: 18px;
+            line-height: 1.7;
+        }
+        
+        .content-body ul, .content-body ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        
+        .content-body li {
+            margin-bottom: 10px;
+        }
+        
+        .content-body strong {
+            color: var(--current-chapter-color);
+        }
+
+        .content-body p {
+            margin-bottom: 15px;
+        }
+
+        /* ============================================
+           6. COMPONENT STYLES
+           ============================================ */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--current-chapter-color);
+        }
+
+        .info-card h4 {
+            color: var(--current-chapter-color);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-card p, .info-card ul {
+            font-size: 15px;
+            color: #4a5568;
+        }
+        
+        .code-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-box .comment {
+            color: #6b7280;
+        }
+
+        .code-box .tag {
+            color: #f472b6;
+        }
+
+        .code-box .attr {
+            color: #a5f3fc;
+        }
+
+        .code-box .value {
+            color: #a7f3d0;
+        }
+        
+        .warning-box {
+            background: #fef3cd;
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            color: #92400e;
+        }
+
+        .tip-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            color: #065f46;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 15px;
+        }
+
+        .comparison-table th {
+            background: var(--current-chapter-color);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        code {
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #1e293b;
+        }
+
+        .example-bad {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 10px 0;
+        }
+
+        .example-good {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 10px 0;
+        }
+
+        .sources-list {
+            column-count: 2;
+            column-gap: 40px;
+        }
+
+        .sources-list h4 {
+            color: var(--current-chapter-color);
+            margin: 15px 0 10px;
+            font-size: 16px;
+            break-after: avoid;
+        }
+
+        .sources-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px;
+            break-inside: avoid;
+        }
+
+        .sources-list li {
+            padding: 5px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sources-list a {
+            color: var(--current-chapter-color);
+            text-decoration: none;
+        }
+
+        .sources-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================
+           7. NAVIGATION CONTROLS
+           ============================================ */
+        #nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 9999;
+        }
+        
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1);
+            background: var(--current-chapter-color);
+            color: white;
+        }
+        
+        /* Progress indicator */
+        #progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--current-chapter-color);
+            transition: width 0.3s ease, background 0.3s ease;
+            z-index: 9998;
+        }
+
+        /* Slide counter */
+        #slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+        }
+        
+        /* ============================================
+           8. ACCESSIBILITY
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            .impress-enabled .step {
+                transition: opacity 0.1s;
+            }
+        }
+
+        /* Focus styles */
+        button:focus-visible,
+        .menu-item:focus-visible {
+            outline: 3px solid var(--current-chapter-color);
+            outline-offset: 2px;
+        }
+
+        /* ============================================
+           9. SMALL TEXT UTILITY
+           ============================================ */
+        .text-sm {
+            font-size: 15px;
+        }
+
+        .text-xs {
+            font-size: 13px;
+        }
+
+        .mt-2 { margin-top: 10px; }
+        .mt-3 { margin-top: 15px; }
+        .mb-2 { margin-bottom: 10px; }
+        .mb-3 { margin-bottom: 15px; }
+    </style>
+</head>
+<body class="impress-not-supported">
+
+    <!-- Fallback -->
+    <div class="fallback-message">
+        <h1>Browser non supportato</h1>
+        <p>Questa presentazione richiede un browser moderno con supporto per trasformazioni CSS3.</p>
+    </div>
+
+    <!-- ============================================
+         SVG ICONS SPRITE
+         ============================================ -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+        <!-- Navigation -->
+        <symbol id="icon-menu" viewBox="0 0 24 24">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+            <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+
+        <!-- Chapter Icons -->
+        <symbol id="icon-scale" viewBox="0 0 24 24">
+            <path d="M12 3v18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M5 7l7-4 7 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="5" cy="13" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="19" cy="13" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M5 10v3M19 10v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-code" viewBox="0 0 24 24">
+            <polyline points="16,18 22,12 16,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <polyline points="8,6 2,12 8,18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-palette" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="12" cy="8" r="1.5" fill="currentColor"/>
+            <circle cx="8" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="16" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
+        </symbol>
+        <symbol id="icon-image" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+            <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-user" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        <symbol id="icon-tool" viewBox="0 0 24 24">
+            <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-book" viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+
+        <!-- Content Icons -->
+        <symbol id="icon-warning" viewBox="0 0 24 24">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24">
+            <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-file" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </symbol>
+        <symbol id="icon-list" viewBox="0 0 24 24">
+            <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="icon-quote" viewBox="0 0 24 24">
+            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v4z" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        <symbol id="icon-type" viewBox="0 0 24 24">
+            <polyline points="4,7 4,4 20,4 20,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <line x1="9" y1="20" x2="15" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="4" x2="12" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+
+        <!-- Accessibility Logo (simplified) -->
+        <symbol id="accessibility-logo" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" stroke="#0066cc" stroke-width="3" fill="none"/>
+            <circle cx="50" cy="25" r="8" fill="#0066cc"/>
+            <line x1="50" y1="35" x2="50" y2="60" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+            <line x1="25" y1="45" x2="75" y2="45" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+            <line x1="50" y1="60" x2="35" y2="85" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+            <line x1="50" y1="60" x2="65" y2="85" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+        </symbol>
+    </svg>
+
+    <!-- MENU NAVIGAZIONE FISSO -->
+    <nav id="chapter-nav">
+        <button id="menu-toggle" aria-label="Menu capitoli">
+            <svg class="icon"><use href="#icon-menu"/></svg>
+        </button>
+        <div id="chapters-menu" role="menu">
+            <div class="menu-item overview-btn" onclick="goToStep('overview')" role="menuitem">
+                <svg class="icon"><use href="#icon-home"/></svg>
+                <span>Panoramica</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch1-title')" role="menuitem">
+                <span class="chapter-dot ch1"></span>
+                <span>1. Intro & Normativa</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch2-title')" role="menuitem">
+                <span class="chapter-dot ch2"></span>
+                <span>2. Markup & Semantica</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch3-title')" role="menuitem">
+                <span class="chapter-dot ch3"></span>
+                <span>3. CSS & Layout</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch4-title')" role="menuitem">
+                <span class="chapter-dot ch4"></span>
+                <span>4. Contenuti & Asset</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch5-title')" role="menuitem">
+                <span class="chapter-dot ch5"></span>
+                <span>5. User Experience</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch6-title')" role="menuitem">
+                <span class="chapter-dot ch6"></span>
+                <span>6. Tool di Controllo</span>
+            </div>
+            <div class="menu-item" onclick="goToStep('ch7-title')" role="menuitem">
+                <span class="chapter-dot ch7"></span>
+                <span>7. Fonti & Riferimenti</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTROLLI NAVIGAZIONE -->
+    <div id="nav-controls">
+        <button class="nav-btn" onclick="impress().prev()" aria-label="Slide precedente">
+            <svg class="icon"><use href="#icon-chevron-left"/></svg>
+        </button>
+        <button class="nav-btn" onclick="impress().next()" aria-label="Slide successiva">
+            <svg class="icon"><use href="#icon-chevron-right"/></svg>
+        </button>
+    </div>
+
+    <!-- SLIDE COUNTER -->
+    <div id="slide-counter">1 / 25</div>
+
+    <!-- PROGRESS BAR -->
+    <div id="progress-bar"></div>
+
+    <!-- ============================================
+         IMPRESS.JS PRESENTATION
+         
+         Layout: Logo accessibilità al centro
+         7 icone in cerchio (raggio ~800px dal centro)
+         Ogni capitolo ha: title card + content slides
+         
+         Centro: (0, 0)
+         Posizioni icone (angolo da top, senso orario):
+         - Ch1: 0° (top)         → (0, -800)
+         - Ch2: 51.4° (top-right) → (624, -500)  
+         - Ch3: 102.8°           → (780, 176)
+         - Ch4: 154.2°           → (390, 720)
+         - Ch5: 205.7°           → (-390, 720)
+         - Ch6: 257.1°           → (-780, 176)
+         - Ch7: 308.5°           → (-624, -500)
+         ============================================ -->
+    <div id="impress" data-transition-duration="1000">
+
+        <!-- ========== OVERVIEW ========== -->
+        <div id="overview" class="step overview" 
+             data-x="0" data-y="0" data-z="0" data-scale="5">
+            <div class="overview-content">
+                <h1>Accessibilità Web</h1>
+                <p class="subtitle">Corso per Editor e Sviluppatori</p>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 1: INTRO & NORMATIVA ========== -->
+        
+        <!-- Ch1 Title -->
+        <div id="ch1-title" class="step chapter-title" data-chapter="1"
+             data-x="0" data-y="-800" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">1</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-scale"/>
+                    </svg>
+                </div>
+                <h2>Intro & Normativa</h2>
+                <p class="chapter-subtitle">Fondamenti legali e obiettivi dell'accessibilità</p>
+            </div>
+        </div>
+
+        <!-- Ch1 Slide 1: Quadro Normativo -->
+        <div id="ch1-s1" class="step content" data-chapter="1"
+             data-x="0" data-y="-1600" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-scale"/></svg>
+                <h2>Quadro <span>Normativo</span></h2>
+            </div>
+            <div class="content-body">
+                <p>L'Italia adotta un sistema normativo gerarchico per l'accessibilità digitale, allineato alle direttive europee.</p>
+                
+                <div class="three-column mt-3">
+                    <div class="info-card">
+                        <h4>Legge Stanca (4/2004)</h4>
+                        <p>Prima normativa italiana sull'accessibilità. Ambito: siti web, app e documenti della PA.</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Direttiva UE 2016/2102</h4>
+                        <p>Estende gli obblighi a tutti i siti e app mobile della PA in Europa.</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Linee Guida AgID</h4>
+                        <p>Standard tecnico italiano basato su WCAG 2.1/2.2 (livello AA).</p>
+                    </div>
+                </div>
+
+                <div class="tip-box mt-3">
+                    <strong>Dal 2025:</strong> L'European Accessibility Act (EAA) rende obbligatoria l'accessibilità anche per prodotti e servizi privati (es. e-commerce, bancomat).
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch1 Slide 2: Standard Obbligatori -->
+        <div id="ch1-s2" class="step content" data-chapter="1"
+             data-x="0" data-y="-2400" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-check"/></svg>
+                <h2>Standard <span>Obbligatori</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="two-column">
+                    <div>
+                        <h4 class="mb-2" style="color: var(--current-chapter-color);">WCAG 2.2 Livello AA</h4>
+                        <p>Standard obbligatorio per la PA italiana. Novità vs 2.1: maggiore attenzione a disabilità cognitive, mobile e drag-and-drop.</p>
+                        
+                        <h4 class="mt-3 mb-2" style="color: var(--current-chapter-color);">Principi POUR</h4>
+                        <ul>
+                            <li><strong>P</strong>ercepibile</li>
+                            <li><strong>U</strong>tilizzabile (Operable)</li>
+                            <li><strong>C</strong>omprensibile (Understandable)</li>
+                            <li><strong>R</strong>obusto</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="info-card">
+                            <h4>Inclusione Universale</h4>
+                            <p>Secondo ISTAT (2023), in Italia ci sono <strong>3,1 milioni</strong> di persone con disabilità.</p>
+                            <p class="mt-2">L'accessibilità non è solo un obbligo legale, ma un imperativo etico per garantire pari accesso all'informazione.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch1 Slide 3: Sintesi Obblighi -->
+        <div id="ch1-s3" class="step content" data-chapter="1"
+             data-x="0" data-y="-3200" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-list"/></svg>
+                <h2>Sintesi degli <span>Obblighi</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <div class="three-column">
+                    <div class="info-card">
+                        <h4>1. Valutazione Tecnica</h4>
+                        <ul>
+                            <li>Verifica WCAG 2.2 AA</li>
+                            <li>Autovalutazione o audit esterno</li>
+                            <li>Frequenza: ogni 2 anni</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <h4>2. Dichiarazione Accessibilità</h4>
+                        <ul>
+                            <li>Documento pubblico obbligatorio</li>
+                            <li>Stato di conformità</li>
+                            <li>Scadenza: 23 settembre/anno</li>
+                        </ul>
+                    </div>
+                    <div class="info-card">
+                        <h4>3. Meccanismo di Feedback</h4>
+                        <ul>
+                            <li>Canale per segnalazioni</li>
+                            <li>Risposta entro 20 giorni</li>
+                            <li>Escalation: Difensore Civico</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="warning-box mt-3">
+                    <strong>Responsabilità Editor:</strong> Applicare questi principi durante la pubblicazione degli articoli è responsabilità diretta di chi gestisce i contenuti.
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 2: MARKUP & SEMANTICA ========== -->
+        
+        <!-- Ch2 Title -->
+        <div id="ch2-title" class="step chapter-title" data-chapter="2"
+             data-x="624" data-y="-500" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">2</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-code"/>
+                    </svg>
+                </div>
+                <h2>Markup & Semantica</h2>
+                <p class="chapter-subtitle">Dare significato alla struttura del documento</p>
+            </div>
+        </div>
+
+        <!-- Ch2 Slide 1: Gerarchia Titoli -->
+        <div id="ch2-s1" class="step content" data-chapter="2"
+             data-x="1400" data-y="-500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-type"/></svg>
+                <h2>Gerarchia dei <span>Titoli</span></h2>
+            </div>
+            <div class="content-body">
+                <p>La struttura semantica è fondamentale per chi utilizza Screen Reader. I titoli devono seguire un ordine logico e nidificato.</p>
+                
+                <div class="two-column mt-3">
+                    <div class="code-box">
+                        <span class="comment">&lt;!-- ✅ Corretto --&gt;</span><br>
+                        <span class="tag">&lt;h1&gt;</span>Titolo Articolo<span class="tag">&lt;/h1&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag">&lt;h2&gt;</span>Metodologia<span class="tag">&lt;/h2&gt;</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h3&gt;</span>Campionamento<span class="tag">&lt;/h3&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag">&lt;h2&gt;</span>Risultati<span class="tag">&lt;/h2&gt;</span>
+                    </div>
+                    <div class="code-box">
+                        <span class="comment">&lt;!-- ❌ Errato: salto livello --&gt;</span><br>
+                        <span class="tag">&lt;h1&gt;</span>Titolo<span class="tag">&lt;/h1&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag" style="color:#ef4444;">&lt;h4&gt;</span>Sezione<span class="tag" style="color:#ef4444;">&lt;/h4&gt;</span><br>
+                        <span class="comment">&lt;!-- Salta h2 e h3! --&gt;</span>
+                    </div>
+                </div>
+
+                <div class="warning-box mt-3">
+                    <strong>Regola d'oro:</strong> Non saltare mai i livelli dei titoli solo per motivi estetici. Usa i CSS per lo stile!
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch2 Slide 2: Enfasi Semantica -->
+        <div id="ch2-s2" class="step content" data-chapter="2"
+             data-x="2200" data-y="-500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-type"/></svg>
+                <h2>Enfasi <span>Semantica</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="two-column">
+                    <div>
+                        <div class="example-good">
+                            <strong>✅ Semantico</strong>
+                            <div class="code-box" style="margin-top:10px;">
+                                È <span class="tag">&lt;strong&gt;</span>obbligatorio<span class="tag">&lt;/strong&gt;</span> compilare.<br>
+                                Il termine <span class="tag">&lt;em&gt;</span>accessibilità<span class="tag">&lt;/em&gt;</span>...
+                            </div>
+                        </div>
+                        <div class="example-bad mt-2">
+                            <strong>❌ Solo visivo</strong>
+                            <div class="code-box" style="margin-top:10px; background:#4a1c1c;">
+                                È <span class="tag">&lt;b&gt;</span>obbligatorio<span class="tag">&lt;/b&gt;</span> compilare.<br>
+                                Il termine <span class="tag">&lt;i&gt;</span>accessibilità<span class="tag">&lt;/i&gt;</span>...
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">Perché preferire strong/em?</h4>
+                        <ul class="mt-2">
+                            <li>Gli <strong>screen reader</strong> cambiano tono ed enfasi vocale</li>
+                            <li><code>&lt;b&gt;</code> e <code>&lt;i&gt;</code> sono solo stilistici</li>
+                            <li>Migliore <strong>SEO</strong>: i motori pesano il contenuto in <code>&lt;strong&gt;</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch2 Slide 3: Liste Semantiche -->
+        <div id="ch2-s3" class="step content" data-chapter="2"
+             data-x="3000" data-y="-500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-list"/></svg>
+                <h2>Liste <span>Semantiche</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Usare i tag appropriati per gli elenchi, mai simularli con trattini manuali.</p>
+                
+                <div class="three-column mt-2">
+                    <div class="code-box">
+                        <span class="comment">&lt;!-- Lista non ordinata --&gt;</span><br>
+                        <span class="tag">&lt;ul&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag">&lt;li&gt;</span>Elemento<span class="tag">&lt;/li&gt;</span><br>
+                        <span class="tag">&lt;/ul&gt;</span>
+                    </div>
+                    <div class="code-box">
+                        <span class="comment">&lt;!-- Lista ordinata --&gt;</span><br>
+                        <span class="tag">&lt;ol&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag">&lt;li&gt;</span>Primo<span class="tag">&lt;/li&gt;</span><br>
+                        <span class="tag">&lt;/ol&gt;</span>
+                    </div>
+                    <div class="code-box">
+                        <span class="comment">&lt;!-- Definizioni --&gt;</span><br>
+                        <span class="tag">&lt;dl&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag">&lt;dt&gt;</span>Termine<span class="tag">&lt;/dt&gt;</span><br>
+                        &nbsp;&nbsp;<span class="tag">&lt;dd&gt;</span>Def.<span class="tag">&lt;/dd&gt;</span><br>
+                        <span class="tag">&lt;/dl&gt;</span>
+                    </div>
+                </div>
+
+                <div class="tip-box mt-2">
+                    <strong>Perché?</strong> Gli screen reader annunciano "lista di 5 elementi" e permettono di navigare tra gli item. Con i trattini manuali, l'utente sente solo "trattino primo elemento trattino..."
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch2 Slide 4: Citazioni -->
+        <div id="ch2-s4" class="step content" data-chapter="2"
+             data-x="3800" data-y="-500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-quote"/></svg>
+                <h2><span>Citazioni</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <div class="two-column">
+                    <div>
+                        <div class="code-box">
+                            <span class="comment">&lt;!-- Citazione in blocco --&gt;</span><br>
+                            <span class="tag">&lt;blockquote</span> <span class="attr">cite</span>=<span class="value">"url"</span><span class="tag">&gt;</span><br>
+                            &nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>Il potere del Web...<span class="tag">&lt;/p&gt;</span><br>
+                            &nbsp;&nbsp;<span class="tag">&lt;footer&gt;</span>— Tim B-Lee<span class="tag">&lt;/footer&gt;</span><br>
+                            <span class="tag">&lt;/blockquote&gt;</span>
+                        </div>
+                        <div class="code-box mt-2">
+                            <span class="comment">&lt;!-- Citazione inline --&gt;</span><br>
+                            Come disse <span class="tag">&lt;q&gt;</span>...<span class="tag">&lt;/q&gt;</span>
+                        </div>
+                        <div class="code-box mt-2">
+                            <span class="comment">&lt;!-- Titolo opera --&gt;</span><br>
+                            Nel documento <span class="tag">&lt;cite&gt;</span>WCAG 2.2<span class="tag">&lt;/cite&gt;</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">Differenze:</h4>
+                        <ul class="mt-2">
+                            <li><code>&lt;blockquote&gt;</code> → citazioni lunghe, blocco separato</li>
+                            <li><code>&lt;q&gt;</code> → citazioni brevi inline (aggiunge virgolette auto)</li>
+                            <li><code>&lt;cite&gt;</code> → titolo di un'opera</li>
+                        </ul>
+                        
+                        <div class="example-bad mt-3">
+                            <strong>❌ Errato:</strong> virgolette e corsivo manuale<br>
+                            <code>&lt;i&gt;"Il potere..."&lt;/i&gt;</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 3: CSS & LAYOUT ========== -->
+        
+        <!-- Ch3 Title -->
+        <div id="ch3-title" class="step chapter-title" data-chapter="3"
+             data-x="780" data-y="176" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">3</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-palette"/>
+                    </svg>
+                </div>
+                <h2>CSS & Layout</h2>
+                <p class="chapter-subtitle">Gestione estetica accessibile del tema</p>
+            </div>
+        </div>
+
+        <!-- Ch3 Slide 1: Specificità CSS -->
+        <div id="ch3-s1" class="step content" data-chapter="3"
+             data-x="1600" data-y="176" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-palette"/></svg>
+                <h2>Specificità <span>CSS</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Quando più regole si applicano allo stesso elemento, vince quella con specificità maggiore.</p>
+                
+                <table class="comparison-table mt-2">
+                    <thead>
+                        <tr><th>Selettore</th><th>Peso</th><th>Note</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>!important</code></td><td>Massimo</td><td>Ultima risorsa, evitare</td></tr>
+                        <tr><td>Stili inline</td><td>1000</td><td>Evitare se possibile</td></tr>
+                        <tr><td>ID <code>#id</code></td><td>100</td><td>Un solo elemento/pagina</td></tr>
+                        <tr><td>Classi <code>.class</code></td><td>10</td><td>✅ Metodo consigliato</td></tr>
+                        <tr><td>Tag <code>p, div</code></td><td>1</td><td>Stili di base</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="tip-box mt-2">
+                    <strong>Consiglio:</strong> Prima di usare <code>!important</code>, prova ad aumentare specificità combinando selettori: <code>.content .intro { }</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch3 Slide 2: Selettori e Contesto -->
+        <div id="ch3-s2" class="step content" data-chapter="3"
+             data-x="2400" data-y="176" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-code"/></svg>
+                <h2>Selettori e <span>Contesto</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Come applicare uno stile solo in un contesto specifico?</p>
+                
+                <div class="two-column mt-2">
+                    <div class="code-box">
+                        <span class="comment">/* ❌ Troppo generico */</span><br>
+                        .title {<br>
+                        &nbsp;&nbsp;color: red;<br>
+                        }<br><br>
+                        <span class="comment">/* ✅ Contestuale */</span><br>
+                        article.details .title {<br>
+                        &nbsp;&nbsp;color: red;<br>
+                        }<br>
+                        .summary .title {<br>
+                        &nbsp;&nbsp;color: blue;<br>
+                        }
+                    </div>
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">Vantaggi:</h4>
+                        <ul class="mt-2">
+                            <li>Specificità maggiore senza <code>!important</code></li>
+                            <li>Stili isolati per contesto</li>
+                            <li>Nessun conflitto</li>
+                            <li>Codice più manutenibile</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch3 Slide 3: Colori e Contrasti -->
+        <div id="ch3-s3" class="step content" data-chapter="3"
+             data-x="3200" data-y="176" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-eye"/></svg>
+                <h2>Colori e <span>Contrasti</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Il contrasto deve essere sufficiente per ipovedenti e in condizioni di forte luce.</p>
+                
+                <div class="two-column mt-2">
+                    <div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr><th>Tipo</th><th>Rapporto minimo</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Testo normale</td><td><strong>4.5:1</strong></td></tr>
+                                <tr><td>Testo grande (≥18pt)</td><td>3:1</td></tr>
+                                <tr><td>Elementi UI/grafici</td><td>3:1</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">Tool di verifica:</h4>
+                        <ul class="mt-2">
+                            <li><strong>WebAIM Contrast Checker</strong></li>
+                            <li><strong>Colour Contrast Analyser</strong></li>
+                            <li><strong>Firefox DevTools</strong> (tab Accessibilità)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="warning-box mt-2">
+                    <strong>Attenzione:</strong> Evitare sfondi immagine sotto il testo. Il testo su immagini è quasi sempre problematico per il contrasto.
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch3 Slide 4: Tipografia -->
+        <div id="ch3-s4" class="step content" data-chapter="3"
+             data-x="4000" data-y="176" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-type"/></svg>
+                <h2>Tipografia e <span>Spazi</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <div class="two-column">
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">Usa unità relative (rem)</h4>
+                        <div class="code-box mt-2">
+                            <span class="comment">/* ❌ Pixel: fisso */</span><br>
+                            body { font-size: 16px; }<br><br>
+                            <span class="comment">/* ✅ Rem: si adatta */</span><br>
+                            body { font-size: 1rem; }<br>
+                            h1 { font-size: 2rem; }
+                        </div>
+                        <p class="text-xs mt-2"><strong>Conversione:</strong> 12px=0.75rem · 16px=1rem · 24px=1.5rem</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">Best practice</h4>
+                        <ul class="mt-2">
+                            <li><strong>line-height: 1.5-1.6</strong> per facilitare la lettura</li>
+                            <li><strong>text-align: left</strong>, mai justify (spazi irregolari problematici per dislessici)</li>
+                        </ul>
+                        <div class="code-box mt-2">
+                            p {<br>
+                            &nbsp;&nbsp;line-height: 1.6;<br>
+                            &nbsp;&nbsp;text-align: left;<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 4: CONTENUTI & ASSET ========== -->
+        
+        <!-- Ch4 Title -->
+        <div id="ch4-title" class="step chapter-title" data-chapter="4"
+             data-x="390" data-y="720" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">4</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-image"/>
+                    </svg>
+                </div>
+                <h2>Contenuti & Asset</h2>
+                <p class="chapter-subtitle">Immagini, Link e File</p>
+            </div>
+        </div>
+
+        <!-- Ch4 Slide 1: Gestione Immagini -->
+        <div id="ch4-s1" class="step content" data-chapter="4"
+             data-x="390" data-y="1500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-image"/></svg>
+                <h2>Gestione <span>Immagini</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Ogni immagine deve avere un attributo <code>alt</code> descrittivo. Se decorativa, <code>alt=""</code> (vuoto, non assente).</p>
+                
+                <div class="two-column mt-2">
+                    <div class="example-good">
+                        <strong>✅ Corretto</strong>
+                        <div class="code-box mt-2" style="font-size:13px;">
+                            &lt;img src="grafico.png"<br>
+                            &nbsp;&nbsp;alt="Vendite 2024: Q1 120k, Q2 145k..."&gt;<br><br>
+                            &lt;img src="decoro.png" alt=""&gt;
+                        </div>
+                    </div>
+                    <div class="example-bad">
+                        <strong>❌ Errato</strong>
+                        <div class="code-box mt-2" style="font-size:13px; background:#4a1c1c;">
+                            &lt;img src="IMG_20240601.jpg"&gt;<br>
+                            <span class="comment">&lt;!-- Alt assente! --&gt;</span><br><br>
+                            &lt;img src="foto.jpg" alt="foto"&gt;<br>
+                            <span class="comment">&lt;!-- Alt inutile --&gt;</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tip-box mt-2">
+                    <strong>Regole:</strong> Descrivi contenuto e scopo, max ~125 caratteri, non iniziare con "Immagine di...". Comprimere le immagini per il web (72-96 DPI, &lt;200KB).
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch4 Slide 2: Gestione Link -->
+        <div id="ch4-s2" class="step content" data-chapter="4"
+             data-x="390" data-y="2300" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-link"/></svg>
+                <h2>Gestione <span>Link</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Il testo del link deve essere auto-esplicativo: capire la destinazione senza leggere il contesto.</p>
+                
+                <table class="comparison-table mt-2">
+                    <thead>
+                        <tr><th>❌ Evitare</th><th>✅ Preferire</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>"clicca qui"</td><td>"Scarica il PDF della ricerca"</td></tr>
+                        <tr><td>"leggi tutto"</td><td>"Consulta la bibliografia completa"</td></tr>
+                        <tr><td>"maggiori info"</td><td>"Informazioni sul bando 2025"</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="two-column mt-2">
+                    <div class="warning-box">
+                        <strong>target="_blank":</strong> Aprire in nuova scheda senza avvisare disorienta. Preferire stessa scheda o avvisare esplicitamente.
+                    </div>
+                    <div class="code-box" style="font-size:13px;">
+                        &lt;a href="doc.pdf"&gt;<br>
+                        &nbsp;&nbsp;Report 2024 (PDF, 2.3MB)<br>
+                        &lt;/a&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ch4 Slide 3: Gestione File -->
+        <div id="ch4-s3" class="step content" data-chapter="4"
+             data-x="390" data-y="3100" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-file"/></svg>
+                <h2>Gestione <span>File</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <div class="two-column">
+                    <div>
+                        <h4 style="color: var(--current-chapter-color);">PDF ottimizzati</h4>
+                        <ul class="mt-2">
+                            <li>Usa "Salva per Web" o "Ottimizza PDF"</li>
+                            <li>72-150 DPI (non 300 DPI da stampa)</li>
+                            <li>Peso: &lt;5MB standard, &lt;10MB complessi</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--current-chapter-color);" class="mt-3">Indica sempre formato e peso</h4>
+                        <p class="mt-2">"Scarica il bando (PDF, 1.2MB)"</p>
+                    </div>
+                    <div>
+                        <div class="info-card">
+                            <h4>Accessibilità PDF</h4>
+                            <ul>
+                                <li>I PDF devono essere <strong>"tagged"</strong> (strutturati) per screen reader</li>
+                                <li>Evitare PDF da scansione (immagini di testo)</li>
+                                <li>Se necessario: applicare OCR</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 5: USER EXPERIENCE ========== -->
+        
+        <!-- Ch5 Title -->
+        <div id="ch5-title" class="step chapter-title" data-chapter="5"
+             data-x="-390" data-y="720" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">5</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-user"/>
+                    </svg>
+                </div>
+                <h2>User Experience</h2>
+                <p class="chapter-subtitle">Semplicità e chiarezza dei contenuti</p>
+            </div>
+        </div>
+
+        <!-- Ch5 Slide 1: UX e Semplicità -->
+        <div id="ch5-s1" class="step content" data-chapter="5"
+             data-x="-390" data-y="1500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-user"/></svg>
+                <h2>UX e <span>Semplicità</span></h2>
+            </div>
+            <div class="content-body">
+                <p>L'accessibilità non riguarda solo il codice, ma anche <strong>come scriviamo</strong>. Una buona UX riduce il carico cognitivo.</p>
+                
+                <div class="two-column mt-3">
+                    <div class="example-bad">
+                        <strong>❌ UX Complessa</strong>
+                        <p class="mt-2">Muri di testo compatti, paragrafi infiniti, linguaggio inutilmente burocratico, nessuna gerarchia visiva.</p>
+                    </div>
+                    <div class="example-good">
+                        <strong>✅ UX Semplice</strong>
+                        <p class="mt-2">Frasi brevi, paragrafi ben distanziati, liste puntate, grassetti per i concetti chiave.</p>
+                    </div>
+                </div>
+                
+                <div class="tip-box mt-3">
+                    <strong>Consiglio dell'esperto:</strong> Applica la tecnica della <strong>"Piramide Rovesciata"</strong>: inserisci le conclusioni o le informazioni più importanti all'inizio di ogni capitolo.
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 6: TOOL DI CONTROLLO ========== -->
+        
+        <!-- Ch6 Title -->
+        <div id="ch6-title" class="step chapter-title" data-chapter="6"
+             data-x="-780" data-y="176" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">6</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-tool"/>
+                    </svg>
+                </div>
+                <h2>Tool di Controllo</h2>
+                <p class="chapter-subtitle">Verificare il lavoro svolto</p>
+            </div>
+        </div>
+
+        <!-- Ch6 Slide 1: Strumenti di Audit -->
+        <div id="ch6-s1" class="step content" data-chapter="6"
+             data-x="-1600" data-y="176" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-search"/></svg>
+                <h2>Strumenti di <span>Audit</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <div class="two-column">
+                    <div class="info-card">
+                        <h4>Lighthouse (Chrome)</h4>
+                        <p>Strumento gratuito integrato in Google Chrome.</p>
+                        <ol class="mt-2">
+                            <li>Aprire pagina in Chrome</li>
+                            <li>F12 → Tab "Lighthouse"</li>
+                            <li>Selezionare "Accessibility"</li>
+                            <li>Cliccare "Analyze page load"</li>
+                        </ol>
+                        <p class="mt-2">Report con punteggio 0-100 e suggerimenti.</p>
+                        <!-- TODO: Screenshot -->
+                    </div>
+                    <div class="info-card">
+                        <h4>Mauve++ (CNR)</h4>
+                        <p>Validatore specifico per linee guida italiane AgID.</p>
+                        <ol class="mt-2">
+                            <li>Accedere a mauve.isti.cnr.it</li>
+                            <li>Inserire URL da verificare</li>
+                            <li>Avviare scansione</li>
+                            <li>Consultare report per criterio WCAG</li>
+                        </ol>
+                        <p class="mt-2">Esporta in PDF/CSV per documentazione.</p>
+                        <!-- TODO: Screenshot -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAPITOLO 7: FONTI & RIFERIMENTI ========== -->
+        
+        <!-- Ch7 Title -->
+        <div id="ch7-title" class="step chapter-title" data-chapter="7"
+             data-x="-624" data-y="-500" data-z="0" data-scale="1">
+            <div class="chapter-card">
+                <span class="chapter-number">7</span>
+                <div class="chapter-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <use href="#icon-book"/>
+                    </svg>
+                </div>
+                <h2>Fonti & Riferimenti</h2>
+                <p class="chapter-subtitle">Approfondimenti e manuali ufficiali</p>
+            </div>
+        </div>
+
+        <!-- Ch7 Slide 1: Fonti -->
+        <div id="ch7-s1" class="step content" data-chapter="7"
+             data-x="-1400" data-y="-500" data-z="0" data-scale="0.8">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-book"/></svg>
+                <h2>Fonti e <span>Riferimenti</span></h2>
+            </div>
+            <div class="content-body">
+                <div class="sources-list text-sm">
+                    <h4>Standard internazionali</h4>
+                    <ul>
+                        <li><a href="https://www.w3.org/TR/WCAG22/" target="_blank">W3C WCAG 2.2</a></li>
+                        <li><a href="https://www.w3.org/WAI/" target="_blank">W3C WAI</a></li>
+                        <li><a href="https://www.w3.org/WAI/fundamentals/accessibility-principles/" target="_blank">Principi POUR</a></li>
+                    </ul>
+                    
+                    <h4>Normativa italiana</h4>
+                    <ul>
+                        <li><a href="https://docs.italia.it/agid/" target="_blank">AgID - Linee Guida</a></li>
+                        <li><a href="https://form.agid.gov.it/" target="_blank">Dichiarazione Accessibilità</a></li>
+                        <li><a href="https://www.defensorecivico-digitale.it" target="_blank">Difensore Civico Digitale</a></li>
+                    </ul>
+                    
+                    <h4>Documentazione tecnica</h4>
+                    <ul>
+                        <li><a href="https://developer.mozilla.org/" target="_blank">MDN Web Docs</a></li>
+                        <li><a href="https://www.html.it/guide/guida-css-di-base/" target="_blank">Guida CSS (HTML.it)</a></li>
+                        <li><a href="https://docs.pkp.sfu.ca/" target="_blank">PKP/OJS Documentation</a></li>
+                    </ul>
+                    
+                    <h4>Tool di verifica</h4>
+                    <ul>
+                        <li><a href="https://mauve.isti.cnr.it/" target="_blank">Mauve++ (CNR)</a></li>
+                        <li><a href="https://webaim.org/resources/contrastchecker/" target="_blank">WebAIM Contrast Checker</a></li>
+                        <li><a href="https://www.tpgi.com/color-contrast-checker/" target="_blank">Colour Contrast Analyser</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- IMPRESS.JS - Local -->
+    <script src="js/impress.js"></script>
+    
+    <script>
+        // Chapter colors
+        const chapterColors = {
+            '1': '#E4002B',
+            '2': '#009246',
+            '3': '#F39200',
+            '4': '#0076C0',
+            '5': '#9B59B6',
+            '6': '#00B5AD',
+            '7': '#E91E63'
+        };
+        
+        // Total slides count
+        const totalSteps = document.querySelectorAll('.step').length;
+        
+        // Init impress.js
+        impress().init();
+        
+        // Menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const chaptersMenu = document.getElementById('chapters-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            chaptersMenu.classList.toggle('open');
+        });
+        
+        // Close menu on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#chapter-nav')) {
+                chaptersMenu.classList.remove('open');
+            }
+        });
+        
+        // Navigate to step
+        function goToStep(stepId) {
+            impress().goto(stepId);
+            chaptersMenu.classList.remove('open');
+        }
+        
+        // Update chapter color
+        function updateChapterColor(stepElement) {
+            const chapter = stepElement.dataset.chapter;
+            if (chapter && chapterColors[chapter]) {
+                document.documentElement.style.setProperty('--current-chapter-color', chapterColors[chapter]);
+            } else {
+                document.documentElement.style.setProperty('--current-chapter-color', '#0066cc');
+            }
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const steps = document.querySelectorAll('.step');
+            const activeStep = document.querySelector('.step.active');
+            if (activeStep) {
+                const index = Array.from(steps).indexOf(activeStep);
+                const progress = ((index + 1) / steps.length) * 100;
+                document.getElementById('progress-bar').style.width = progress + '%';
+                document.getElementById('slide-counter').textContent = `${index + 1} / ${totalSteps}`;
+            }
+        }
+        
+        // Event listener for step changes
+        document.addEventListener('impress:stepenter', (e) => {
+            updateChapterColor(e.target);
+            updateProgress();
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                goToStep('overview');
+            }
+            if (e.key === 'm' || e.key === 'M') {
+                chaptersMenu.classList.toggle('open');
+            }
+        });
+        
+        // Initial update
+        updateProgress();
+    </script>
+</body>
+</html>
