@@ -118,7 +118,6 @@
             fill: white;
             stroke-width: 4;
             transition: all 0.3s ease;
-            #filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
         .map-icon-symbol {
@@ -250,8 +249,8 @@
         
         /* OVERVIEW - transparent, just positions the camera */
         .step.overview {
-            width: 2560px;
-            height: 1600px;
+            width: 1440px;
+            height: 900px;
             background: transparent;
         }
 
@@ -781,6 +780,14 @@
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
             <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
         </symbol>
+        <symbol id="icon-tree" viewBox="0 0 24 24">
+            <path d="M4 6h6v4H4z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M14 6h6v4h-6z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M9 14h6v4H9z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            
+            <path d="M7 10v4M17 10v4M12 14v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <path d="M12 10H7M12 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </symbol>
         <symbol id="icon-tool" viewBox="0 0 24 24">
             <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </symbol>
@@ -905,7 +912,7 @@
         <!-- ========== CAPITOLO 1: INTRO & NORMATIVA ========== -->
         
         <!-- Ch1 Title (positioned over icon) -->
-        <div id="ch1-title" class="step chapter-title ch1-color" data-chapter="1" data-x="-1230" data-y="-1530" data-z="-3000" data-scale="0.8" data-rotate-z="-39">
+        <div id="ch1-title" class="step chapter-title ch1-color" data-chapter="1" data-x="-1350" data-y="-1050" data-z="-2000" data-scale="0.8" data-rotate-z="-39">
             <div class="chapter-card">
                 <span class="chapter-number">1</span>
                 <div class="chapter-icon">
@@ -919,7 +926,7 @@
         </div>
 
         <!-- Ch1 Slide 1: Quadro Normativo -->
-        <div id="ch1-s1" class="step content ch1-color" data-chapter="1" data-x="-1230" data-y="-1530" data-z="-5000" data-scale="0.7" data-rotate-z="-39">
+        <div id="ch1-s1" class="step content ch1-color" data-chapter="1" data-x="-2600" data-y="-870" data-z="-3000" data-scale="0.8" data-rotate-z="-39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-scale"/></svg>
                 <h2>Quadro <span>Normativo</span></h2>
@@ -949,7 +956,7 @@
         </div>
 
         <!-- Ch1 Slide 2: Standard Obbligatori -->
-        <div id="ch1-s2" class="step content ch1-color" data-chapter="1" data-x="-1230" data-y="-1530" data-z="-7000" data-scale="0.7" data-rotate-z="-39">
+        <div id="ch1-s2" class="step content ch1-color" data-chapter="1" data-x="-3850" data-y="-690" data-z="-4000" data-scale="0.8" data-rotate-z="-39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-check"/></svg>
                 <h2>Standard <span>Obbligatori</span></h2>
@@ -979,7 +986,7 @@
         </div>
 
         <!-- Ch1 Slide 3: Sintesi Obblighi -->
-        <div id="ch1-s3" class="step content ch1-color" data-chapter="1" data-x="-1230" data-y="-1530" data-z="-9000" data-scale="0.7" data-rotate-z="-39">
+        <div id="ch1-s3" class="step content ch1-color" data-chapter="1" data-x="-5100" data-y="-510" data-z="-5000" data-scale="0.8" data-rotate-z="-39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-list"/></svg>
                 <h2>Sintesi degli <span>Obblighi</span></h2>
@@ -1020,7 +1027,7 @@
 
         <!-- ========== CAPITOLO 2: MARKUP & SEMANTICA ========== -->
         
-        <div id="ch2-title" class="step chapter-title ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-3000" data-scale="0.8">
+        <div id="ch2-title" class="step chapter-title ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-2000" data-scale="0.8">
             <div class="chapter-card">
                 <span class="chapter-number">2</span>
                 <div class="chapter-icon">
@@ -1033,7 +1040,7 @@
             </div>
         </div>
 
-        <div id="ch2-s1" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-5000" data-scale="0.7">
+        <div id="ch2-s1" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-3000" data-scale="0.8">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-type"/></svg>
                 <h2>Gerarchia dei <span>Titoli</span></h2>
@@ -1063,7 +1070,7 @@
             </div>
         </div>
 
-        <div id="ch2-s2" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-7000" data-scale="0.7">
+        <div id="ch2-s2" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-4000" data-scale="0.8">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-type"/></svg>
                 <h2>Enfasi <span>Semantica</span></h2>
@@ -1099,7 +1106,7 @@
             </div>
         </div>
 
-        <div id="ch2-s3" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-9000" data-scale="0.7">
+        <div id="ch2-s3" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-5000" data-scale="0.8">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-list"/></svg>
                 <h2>Liste <span>Semantiche</span></h2>
@@ -1141,7 +1148,7 @@
             </div>
         </div>
 
-        <div id="ch2-s4" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-11000" data-scale="0.7">
+        <div id="ch2-s4" class="step content ch2-color" data-chapter="2" data-x="0" data-y="-1960" data-z="-6000" data-scale="0.8">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-quote"/></svg>
                 <h2><span>Citazioni</span></h2>
@@ -1175,7 +1182,7 @@
 
         <!-- ========== CAPITOLO 3: CSS & LAYOUT ========== -->
         
-        <div id="ch3-title" class="step chapter-title ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-3000" data-scale="0.8" data-rotate-z="39">
+        <div id="ch3-title" class="step chapter-title ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-2000" data-scale="0.8" data-rotate-z="39">
             <div class="chapter-card">
                 <span class="chapter-number">3</span>
                 <div class="chapter-icon">
@@ -1188,7 +1195,7 @@
             </div>
         </div>
 
-        <div id="ch3-s1" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-5000" data-scale="0.7" data-rotate-z="39">
+        <div id="ch3-s1" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-3000" data-scale="0.8" data-rotate-z="39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-palette"/></svg>
                 <h2>Specificità <span>CSS</span></h2>
@@ -1201,11 +1208,11 @@
                         <tr><th>Selettore</th><th>Peso</th><th>Note</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td><code>!important</code></td><td>Massimo</td><td>Ultima risorsa, evitare</td></tr>
-                        <tr><td>Stili inline</td><td>1000</td><td>Evitare se possibile</td></tr>
-                        <tr><td>ID <code>#id</code></td><td>100</td><td>Un solo elemento/pagina</td></tr>
-                        <tr><td>Classi <code>.class</code></td><td>10</td><td>✅ Metodo consigliato</td></tr>
                         <tr><td>Tag <code>p, div</code></td><td>1</td><td>Stili di base</td></tr>
+                        <tr><td>Classi <code>.class</code></td><td>10</td><td>✅ Metodo consigliato</td></tr>
+                        <tr><td>ID <code>#id</code></td><td>100</td><td>Un solo elemento/pagina</td></tr>
+                        <tr><td>Stili inline</td><td>1000</td><td>Evitare se possibile</td></tr>
+                        <tr><td><code>!important</code></td><td>Massimo</td><td>Ultima risorsa, evitare</td></tr>
                     </tbody>
                 </table>
 
@@ -1215,7 +1222,7 @@
             </div>
         </div>
 
-        <div id="ch3-s2" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-7000" data-scale="0.7" data-rotate-z="39">
+        <div id="ch3-s2" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-4000" data-scale="0.8" data-rotate-z="39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-code"/></svg>
                 <h2>Selettori e <span>Contesto</span></h2>
@@ -1244,7 +1251,7 @@
             </div>
         </div>
 
-        <div id="ch3-s3" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-9000" data-scale="0.7" data-rotate-z="39">
+        <div id="ch3-s3" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-5000" data-scale="0.8" data-rotate-z="39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-eye"/></svg>
                 <h2>Colori e <span>Contrasti</span></h2>
@@ -1266,9 +1273,9 @@
                     <div>
                         <h4>Tool di verifica:</h4>
                         <ul class="mt-2">
-                            <li><strong>WebAIM Contrast Checker</strong></li>
-                            <li><strong>Colour Contrast Analyser</strong></li>
-                            <li><strong>Firefox DevTools</strong></li>
+                            <li><strong><a href="https://webaim.org/resources/contrastchecker/" target="_blank">WebAIM Contrast Checker</a></strong></li>
+                            <li><strong><a href="https://github.com/WebAccessibilityTools/CCA" target="_blank">Colour Contrast Analyser</a></strong></li>
+                            <li><strong>Chrome e Firefox DevTools</strong></li>
                         </ul>
                     </div>
                 </div>
@@ -1279,7 +1286,7 @@
             </div>
         </div>
 
-        <div id="ch3-s4" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-11000" data-scale="0.7" data-rotate-z="39">
+        <div id="ch3-s4" class="step content ch3-color" data-chapter="3" data-x="1230" data-y="-1530" data-z="-6000" data-scale="0.8" data-rotate-z="39">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-type"/></svg>
                 <h2>Tipografia e <span>Spazi</span></h2>
@@ -1314,7 +1321,7 @@
 
         <!-- ========== CAPITOLO 4: CONTENUTI & ASSET ========== -->
         
-        <div id="ch4-title" class="step chapter-title ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-3000" data-scale="0.8" data-rotate-z="112">
+        <div id="ch4-title" class="step chapter-title ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-2000" data-scale="0.8" data-rotate-z="112">
             <div class="chapter-card">
                 <span class="chapter-number">4</span>
                 <div class="chapter-icon">
@@ -1327,13 +1334,13 @@
             </div>
         </div>
 
-        <div id="ch4-s1" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-5000" data-scale="0.7" data-rotate-z="112">
+        <div id="ch4-s1" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-3000" data-scale="0.8" data-rotate-z="112">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-image"/></svg>
                 <h2>Gestione <span>Immagini</span></h2>
             </div>
             <div class="content-body text-sm">
-                <p>Ogni immagine deve avere un attributo <code>alt</code> descrittivo. Se decorativa, <code>alt=""</code>.</p>
+                <p>Ogni immagine deve avere un attributo <code>alt</code> descrittivo. Solo se meramente decorativa, <code>alt=""</code>.</p>
                 
                 <div class="two-column mt-2">
                     <div class="example-good">
@@ -1360,7 +1367,28 @@
             </div>
         </div>
 
-        <div id="ch4-s2" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-7000" data-scale="0.7" data-rotate-z="112">
+        <div id="ch4-s2" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-4000" data-scale="0.8" data-rotate-z="112">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-image"/></svg>
+                <h2>Gestione <span>Immagini</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <p>Le immagini con testo informativo (date, luoghi, nomi) <strong>sono inaccessibili</strong> agli screen reader</p>
+                <div class="two-column mt-2">
+                    <div class="example-bad">
+                        <strong>❌ Errato</strong>
+                        <p>Locandine, banner, meme con info chiave (es. "Evento 15/03 Pisa, ore 18")</p>
+                    </div>
+                    <div class="example-good">
+                        <strong>✅ Corretto</strong>
+                        <p>Scrivi info in HTML: &lt;h2&gt;Evento&lt;/h2&gt;&lt;p&gt;15/03, Pisa, ore 18&lt;/p&gt;.
+                        <p>Alt esteso: alt="Locandina: Concerto 15 marzo Piazza dei Miracoli, Pisa, dalle 18. Biglietti €10".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ch4-s3" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-5000" data-scale="0.8" data-rotate-z="112">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-link"/></svg>
                 <h2>Gestione <span>Link</span></h2>
@@ -1379,12 +1407,12 @@
                 </table>
                 
                 <div class="warning-box mt-2">
-                    <strong>target="_blank":</strong> Aprire in nuova scheda senza avvisare disorienta. Preferire stessa scheda o avvisare.
+                    <strong>target="_blank":</strong> Aprire in nuova scheda senza avvisare disorienta. Preferire stessa scheda o avvisare nel testo, obbligatorio aggiungere rel="noopener noreferrer" (WCAG 2.4.4: Link Purpose).
                 </div>
             </div>
         </div>
 
-        <div id="ch4-s3" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-9000" data-scale="0.7" data-rotate-z="112">
+        <div id="ch4-s4" class="step content ch4-color" data-chapter="4" data-x="1900" data-y="430" data-z="-6000" data-scale="0.8" data-rotate-z="112">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-file"/></svg>
                 <h2>Gestione <span>File</span></h2>
@@ -1415,7 +1443,7 @@
 
         <!-- ========== CAPITOLO 5: USER EXPERIENCE ========== -->
         
-        <div id="ch5-title" class="step chapter-title ch5-color" data-chapter="5" data-x="1230" data-y="1520" data-z="-3000" data-scale="0.8" data-rotate-z="142">
+        <div id="ch5-title" class="step chapter-title ch5-color" data-chapter="5" data-x="1230" data-y="1520" data-z="-2000" data-scale="0.8" data-rotate-z="142">
             <div class="chapter-card">
                 <span class="chapter-number">5</span>
                 <div class="chapter-icon">
@@ -1428,7 +1456,7 @@
             </div>
         </div>
 
-        <div id="ch5-s1" class="step content ch5-color" data-chapter="5" data-x="1230" data-y="1520" data-z="-5000" data-scale="0.7" data-rotate-z="142">
+        <div id="ch5-s1" class="step content ch5-color" data-chapter="5" data-x="1230" data-y="1520" data-z="-3000" data-scale="0.8" data-rotate-z="142">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-user"/></svg>
                 <h2>UX e <span>Semplicità</span></h2>
@@ -1453,9 +1481,37 @@
             </div>
         </div>
 
+        <div id="ch5-s2" class="step content ch5-color" data-chapter="5" data-x="1230" data-y="1520" data-z="-4000" data-scale="0.8" data-rotate-z="142">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-tree"/></svg>
+                <h2>Navigazione Semplice</h2>
+            </div>
+            <div class="content-body">
+                <p>Obiettivo: Raggiungere qualsiasi contenuto in <strong>max 3 click</strong>, senza trappole o sorprese.</p>
+                
+                <div class="two-column mt-3">
+                    <div class="example-bad">
+                        <strong>❌ Problemi Comuni</strong>
+                        <p class="mt-2">Menu annidati profondi (>2 livelli).</p>
+                        <p class="mt-2">Hamburger menu su desktop (nasconde contenuti).</p>
+                        <p class="mt-2">Link generici ("Clicca qui", "Altro").</p>
+                        <p class="mt-2">Skip link assenti.</p>    
+                    </div>
+                    <div class="example-good">
+                        <strong>✅ Best Practice</strong>
+                        <p class="mt-2">Skip links: "Salta al contenuto principale" (visibile con tastiera).</p>
+                        <p class="mt-2">Menu a singolo livello o mega-menu testuali.</p>
+                        <p class="mt-2">Breadcrumb: "Home > Categoria > Pagina".</p>
+                        <p class="mt-2">Link descrittivi: "Scarica PDF programma eventi".</p>
+                        <p class="mt-2">Tastiera-friendly: focus visibile (outline 2px).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ========== CAPITOLO 6: TOOL DI CONTROLLO ========== -->
         
-        <div id="ch6-title" class="step chapter-title ch6-color" data-chapter="6" data-x="-1230" data-y="1520" data-z="-3000" data-scale="0.8" data-rotate-z="218">
+        <div id="ch6-title" class="step chapter-title ch6-color" data-chapter="6" data-x="-1230" data-y="1520" data-z="-2000" data-scale="0.8" data-rotate-z="218">
             <div class="chapter-card">
                 <span class="chapter-number">6</span>
                 <div class="chapter-icon">
@@ -1468,7 +1524,7 @@
             </div>
         </div>
 
-        <div id="ch6-s1" class="step content ch6-color" data-chapter="6" data-x="-1230" data-y="1520" data-z="-5000" data-scale="0.7" data-rotate-z="218">
+        <div id="ch6-s1" class="step content ch6-color" data-chapter="6" data-x="-1230" data-y="1520" data-z="-3000" data-scale="0.8" data-rotate-z="218">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-search"/></svg>
                 <h2>Strumenti di <span>Audit</span></h2>
@@ -1501,9 +1557,39 @@
             </div>
         </div>
 
+        <div id="ch6-s2" class="step content ch6-color" data-chapter="6" data-x="-1230" data-y="1520" data-z="-4000" data-scale="0.8" data-rotate-z="218">
+            <div class="content-header">
+                <svg class="header-icon icon"><use href="#icon-search"/></svg>
+                <h2>Strumenti di <span>Audit</span></h2>
+            </div>
+            <div class="content-body text-sm">
+                <div class="two-column">
+                    <div class="info-card">
+                        <h4>Contrast Checker</h4>
+                        <ol class="mt-2">
+                            <li><strong><a href="https://webaim.org/resources/contrastchecker/" target="_blank" rel="noopener noreferrer">WebAIM Contrast Checker</a></strong> <small>(Online, HEX rapido)</small></li>
+                            <li><strong><a href="https://github.com/WebAccessibilityTools/CCA" target="_blank" rel="noopener noreferrer">Colour Contrast Analyser</a></strong> <small>(Download, picker schermo)</small></li>
+                            <li><strong><a href="https://contrast-ratio.com/" target="_blank" rel="noopener noreferrer">Contrast Ratio (Lea Verou)</a></strong> <small>(Supporta trasparenza)</small></li>
+                        </ol>
+                        <p class="mt-2">Min: 4.5:1 testo AA.</p>
+                    </div>
+                    <div class="info-card">
+                        <h4>Font & Tipografia Checker</h4>
+                        <ol class="mt-2">
+                            <li><strong><a href="https://wave.webaim.org/" target="_blank" rel="noopener noreferrer">WAVE</a></strong> <small>(Gerarchia H1-H6, dimensioni)</small></li>
+                            <li><strong><a href="https://mauve.isti.cnr.it/plus/" target="_blank" rel="noopener noreferrer">Mauve++ (AgID)</a></strong> <small>(Italiano, gerarchia + font, compliance EAA)</small></li>
+                            <li><strong><a href="https://chrome.google.com/webstore/detail/lighthouse/blipmdconlkpinefehnmjammfjpmpbjk" target="_blank" rel="noopener noreferrer">Google Lighthouse</a></strong> <small>(Font size, readability score)</small></li>
+                            <li><strong><a href="https://firefox-source-docs.mozilla.org/devtools-user/accessibility_inspector/index.html" target="_blank" rel="noopener noreferrer">Firefox DevTools</a></strong> <small>(Accessibilità + Computed tab)</small></li>
+                        </ol>
+                        <p class="mt-2">Min: 16px sans-serif, line-height 1.5. H1-H6 logici.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ========== CAPITOLO 7: FONTI & RIFERIMENTI ========== -->
         
-        <div id="ch7-title" class="step chapter-title ch7-color" data-chapter="7" data-x="-1900" data-y="430" data-z="-3000" data-scale="0.8" data-rotate-z="248">
+        <div id="ch7-title" class="step chapter-title ch7-color" data-chapter="7" data-x="-1900" data-y="430" data-z="-2000" data-scale="0.8" data-rotate-z="248">
             <div class="chapter-card">
                 <span class="chapter-number">7</span>
                 <div class="chapter-icon">
@@ -1516,7 +1602,7 @@
             </div>
         </div>
 
-        <div id="ch7-s1" class="step content ch7-color" data-chapter="7" data-x="-1900" data-y="430" data-z="-5000" data-scale="0.7" data-rotate-z="248">
+        <div id="ch7-s1" class="step content ch7-color" data-chapter="7" data-x="-1900" data-y="430" data-z="-3000" data-scale="0.8" data-rotate-z="248">
             <div class="content-header">
                 <svg class="header-icon icon"><use href="#icon-book"/></svg>
                 <h2>Fonti e <span>Riferimenti</span></h2>
